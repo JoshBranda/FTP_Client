@@ -1,3 +1,7 @@
+//Used the following pages as resources:
+//https://stackoverflow.com/questions/1119385/junit-test-for-system-out-println
+//https://stackoverflow.com/questions/5694385/getting-the-filenames-of-all-files-in-a-folder
+
 package client;
 
 import org.junit.jupiter.api.AfterAll;
