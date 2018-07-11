@@ -40,7 +40,7 @@ public class RemoteFileManager {
 
     public List<String> getFiles() throws IOException {
             FTPFile[] files  = ftp.listFiles();
-            return Arrays.stream(files)
+            return Arrays.stream(files).filter(f->f.isFile())
                     .map(FTPFile::getName)
                     .collect(Collectors.toList());
     }
