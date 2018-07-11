@@ -18,5 +18,19 @@ repositories {
 }
 
 dependencies {
+    testImplementation(
+            'org.junit.jupiter:junit-jupiter-api:5.2.0'
+    )
+    testRuntimeOnly(
+            'org.junit.jupiter:junit-jupiter-engine:5.2.0',
+            'org.junit.vintage:junit-vintage-engine:5.2.0'
+    )
     compile group: 'commons-net', name: 'commons-net', version:'3.6'
+}
+
+test {
+    useJUnitPlatform()
+        testLogging {
+        events 'PASSED', 'FAILED', 'SKIPPED'
+    }
 }
