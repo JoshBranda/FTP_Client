@@ -2,9 +2,10 @@ package client;
 
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPReply;
-import org.junit.After;
 import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockftpserver.fake.FakeFtpServer;
 import org.mockftpserver.fake.UserAccount;
 import org.mockftpserver.fake.filesystem.DirectoryEntry;
@@ -25,12 +26,12 @@ public class RemoteFileManagerTest {
     private FTPClient ftp;
 
     private RemoteFileManager remoteFileManager;
-    private static final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
-    private static final ByteArrayOutputStream errContent = new ByteArrayOutputStream();
+    private  ByteArrayOutputStream outContent;
+    private  ByteArrayOutputStream errContent;
     private static final PrintStream originalOut = System.out;
     private static final PrintStream originalErr = System.err;
 
-    @Before
+    @BeforeEach
     public void setup() throws IOException {
         fakeFtpServer = new FakeFtpServer();
         fakeFtpServer.addUserAccount(new UserAccount("user", "password", "/data"));
@@ -55,6 +56,9 @@ public class RemoteFileManagerTest {
         }
         ftp.login("user", "password");
         remoteFileManager = new RemoteFileManager(ftp);
+
+        outContent = new ByteArrayOutputStream();
+        errContent = new ByteArrayOutputStream();
         System.setOut(new PrintStream(outContent));
         System.setErr(new PrintStream(errContent));
     }
@@ -74,7 +78,7 @@ public class RemoteFileManagerTest {
         assertEquals("foobar", outContent.toString().trim());
     }
 
-    @After
+    @AfterEach
     public void teardown() throws IOException {
         ftp.disconnect();
         fakeFtpServer.stop();
