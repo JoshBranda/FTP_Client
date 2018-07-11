@@ -9,8 +9,8 @@ version = '0.1.0'
 
 description = """"""
 
-sourceCompatibility = 1.5
-targetCompatibility = 1.5
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
 
 
 repositories {
