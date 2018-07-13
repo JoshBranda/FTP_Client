@@ -26,11 +26,18 @@ dependencies {
             'org.junit.vintage:junit-vintage-engine:5.2.0'
     )
     compile group: 'commons-net', name: 'commons-net', version:'3.6'
+
+    // https://mvnrepository.com/artifact/org.mockftpserver/MockFtpServer
+    testCompile group: 'org.mockftpserver', name: 'MockFtpServer', version: '2.7.1'
+
+
 }
 
 test {
     useJUnitPlatform()
         testLogging {
         events 'PASSED', 'FAILED', 'SKIPPED'
-    }
+        }
+    testLogging.showStandardStreams = true
+
 }
