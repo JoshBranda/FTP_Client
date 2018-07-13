@@ -11,7 +11,6 @@
 * **Link to the ticket/story on trello it's associated with:**
 
 
-
 * **What are the testing steps?**
 
 
