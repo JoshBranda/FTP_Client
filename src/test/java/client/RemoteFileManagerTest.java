@@ -17,6 +17,9 @@ import java.io.IOException;
 import java.io.PrintStream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+
 
 public class RemoteFileManagerTest {
 
@@ -84,13 +87,13 @@ public class RemoteFileManagerTest {
     @Test
     public void removeFileNotInFilesystem()
     {
-        assertEquals(false, remoteFileManager.removeFile("/remove/pizza_party.txt"));
+        assertFalse(remoteFileManager.removeFile("/remove/pizza_party.txt"));
     }
 
     @Test
     public void removeFileInFilesystem()
     {
-        assertEquals(true, remoteFileManager.removeFile("/remove/potato.txt"));
+        assertTrue(remoteFileManager.removeFile("/remove/potato.txt"));
     }
 
     @AfterEach
