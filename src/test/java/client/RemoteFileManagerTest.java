@@ -36,9 +36,13 @@ public class RemoteFileManagerTest {
         fakeFtpServer.addUserAccount(new UserAccount("user", "password", "/data"));
 
         FileSystem fileSystem = new UnixFakeFileSystem();
+        //Directory & file create to test display functions
         fileSystem.add(new DirectoryEntry("/data"));
         fileSystem.add(new DirectoryEntry("/data/foobar"));
         fileSystem.add(new FileEntry("/data/foobar.txt", "abcdef 1234567890"));
+        //Directory & file created to test remove functions
+        fileSystem.add(new DirectoryEntry("/remove"));
+        fileSystem.add(new FileEntry("/remove/potato.txt", "abcdef 1234567890"));
         fakeFtpServer.setFileSystem(fileSystem);
         fakeFtpServer.setServerControlPort(0);
 
@@ -75,6 +79,18 @@ public class RemoteFileManagerTest {
     {
         remoteFileManager.displayDirectories();
         assertEquals("foobar", outContent.toString().trim());
+    }
+
+    @Test
+    public void removeFileNotInFilesystem()
+    {
+        assertEquals(false, remoteFileManager.removeFile("/remove/pizza_party.txt"));
+    }
+
+    @Test
+    public void removeFileInFilesystem()
+    {
+        assertEquals(true, remoteFileManager.removeFile("/remove/potato.txt"));
     }
 
     @AfterEach
