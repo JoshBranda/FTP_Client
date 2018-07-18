@@ -3,9 +3,8 @@ package client;
 import java.io.IOException;
 
 import org.apache.commons.net.ftp.FTPClient;
-import org.apache.commons.net.ftp.FTPReply;
 
-/* Default to FTPs connection */
+/* FTP connection */
 public class FtpConnection {
 	private FTPClient ftp;
 	private String host;
@@ -30,13 +29,21 @@ public class FtpConnection {
 				break;
 			} catch (IOException e) {
 				this.retries -= 1;
-				if (this.retries <= 0) {
+				if (this.retries <= 0 && !this.ftp.isConnected()) {
 					System.out.println("Connection to host failed...");
-					e.printStackTrace();
+					System.out.println(e.toString());
 				}
 			}
 		} while (this.retries > 0);
 		return this.ftp;
+	}
+	
+	public void disconnect() {
+		try {
+			this.ftp.disconnect();
+		} catch (IOException e) {
+			System.out.println(e.toString());
+		}
 	}
 
 	public boolean isConnected() {
@@ -47,15 +54,6 @@ public class FtpConnection {
 		return this.ftp;
 	}
 	
-	public void disconnect() {
-		try {
-			this.ftp.disconnect();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-	
 	public boolean login(String username, String password) {
 		this.username = username;
 		this.password = password;
@@ -64,7 +62,7 @@ public class FtpConnection {
 			return this.ftp.login(this.username, this.password);
 		} catch (IOException e) {
 			System.out.println("Login failed...");
-			e.printStackTrace();
+			System.out.println(e.toString());
 			return false;
 		}
 	}

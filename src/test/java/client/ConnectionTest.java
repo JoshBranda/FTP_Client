@@ -14,10 +14,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
+import org.apache.commons.net.ftp.FTPSClient;
 
-import org.apache.commons.net.ftp.FTPClient;
-
-public class FtpConnectionTest {
+public class ConnectionTest {
 	
     private FakeFtpServer fakeFtpServer;
     
@@ -36,12 +35,15 @@ public class FtpConnectionTest {
     
     @Test
     public void connect() {
-    	FtpConnection conn = new client.FtpConnection();
-    	FTPClient ftp = conn.getConnection();
+    	Connection conn = new client.Connection();
     	
-    	assertFalse(ftp.isConnected());
+    	assertFalse(conn.isConnected());
     	
-    	ftp = conn.connect("localhost", fakeFtpServer.getServerControlPort());
+    	// Test valid host
+    	FTPSClient ftp = conn.connect("localhost", fakeFtpServer.getServerControlPort());
+    	
+    	assertEquals("TLS", ftp.getAuthValue());
+    	assertEquals(502, ftp.getReplyCode());
     	assertTrue(ftp.isConnected());
     	
     	conn.disconnect();
@@ -50,13 +52,14 @@ public class FtpConnectionTest {
     	ftp = conn.connect("invalidHost", fakeFtpServer.getServerControlPort());
     	
     	assertFalse(ftp.isConnected());
+
     }
-    
+
     @Test
     public void disconnect() {
-    	FtpConnection conn = new client.FtpConnection();
+    	Connection conn = new client.Connection();
         conn.connect("localhost", fakeFtpServer.getServerControlPort());
-    	FTPClient ftp = conn.getConnection();
+    	FTPSClient ftp = conn.getConnection();
     	
         assertTrue(ftp.isConnected());
         
@@ -67,16 +70,18 @@ public class FtpConnectionTest {
     
     @Test
     public void getConnection() {
-    	FtpConnection conn = new client.FtpConnection();
-        conn.connect("localhost", fakeFtpServer.getServerControlPort());
-    	FTPClient ftp = conn.getConnection();
+    	Connection conn = new client.Connection();
+    	conn.connect("localhost", fakeFtpServer.getServerControlPort());
     	
+    	FTPSClient ftp = conn.getConnection();
+    	
+    	assertEquals("TLS",ftp.getAuthValue());
     	assertTrue(ftp.isAvailable());
     }
     
     @Test
     public void isConnected() {
-    	FtpConnection conn = new client.FtpConnection();
+    	Connection conn = new client.Connection();
     	
     	assertFalse(conn.isConnected());
     	
@@ -87,9 +92,9 @@ public class FtpConnectionTest {
     
     @Test
     public void login() {
-    	FtpConnection conn = new client.FtpConnection();
+    	Connection conn = new client.Connection();
     	conn.connect("localhost", fakeFtpServer.getServerControlPort());
-        FTPClient ftp = conn.getConnection();
+        FTPSClient ftp = conn.getConnection();
         int reply;
         
         // Test valid username and password
@@ -133,7 +138,7 @@ public class FtpConnectionTest {
         
         assertEquals(501,reply); // FTP error code: syntax error for parameters   
     }
-    
+
     @AfterEach
     public void tearDown() {
     	fakeFtpServer.stop();

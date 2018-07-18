@@ -2,76 +2,68 @@ package client;
 
 import java.io.IOException;
 
-import org.apache.commons.net.ftp.FTPReply;
 import org.apache.commons.net.ftp.FTPSClient;
 
-/* Default to FTPs connection */
+/* FTPs connection */
 public class Connection {
-	private FTPSClient ftps;
+	private FTPSClient ftp;
 	private String host;
 	private int port;
 	private String username;
 	private String password;
 	private int retries;
 	
-	public Connection() throws IOException {
-			this.ftps = new FTPSClient();
-	}
-
-	public FTPSClient connect(String host) throws IOException {
-		this.host = host;
-		this.retries = 5;
-		// Retry for 5 times if connection fails
-		do {
-			try {
-				this.ftps.connect(this.host);
-				break;
-			} catch (IOException e) {
-				this.retries -= 1;
-				if (this.retries <= 0) {
-					throw e;
-				}
-			}
-		} while (this.retries > 0);
-		return this.ftps;
+	public Connection() {
+			this.ftp = new FTPSClient();
 	}
 	
-	public FTPSClient connect(String host, int port) throws IOException {
+	public FTPSClient connect(String host, int port) {
 		this.host = host;
 		this.port = port;
 		this.retries = 5;
 		// Retry for 5 times if connection fails
 		do {
 			try {
-				this.ftps.connect(this.host, this.port);
-		        int reply = this.ftps.getReplyCode();
-		        if (!FTPReply.isPositiveCompletion(reply))
-		        {
-		            this.ftps.disconnect();
-		            throw new IOException("Exception in connecting to FTP Server");
-		        }
+				this.ftp.connect(this.host, this.port);
+				//System.out.println("Connected to " + this.host + " on port: " + this.port);
 				break;
 			} catch (IOException e) {
 				this.retries -= 1;
-				if (this.retries <= 0) {
-					throw e;
+				if (this.retries <= 0 && !this.ftp.isConnected()) {
+					System.out.println("Connection to host failed...");
+					System.out.println(e.toString());
 				}
 			}
 		} while (this.retries > 0);
-		return this.ftps;
+		return this.ftp;
+	}
+
+	public void disconnect() {
+		try {
+			this.ftp.disconnect();
+		} catch (IOException e) {
+			System.out.println(e.toString());
+		}
 	}
 	
-	public FTPSClient getConnection() throws IOException {
-		return this.ftps;
+	public boolean isConnected() {
+		return this.ftp.isConnected();
 	}
 	
-	public void disconnect() throws IOException {
-		this.ftps.disconnect();
+	public FTPSClient getConnection() {
+		return this.ftp;
 	}
 	
-	public boolean login(String username, String password) throws IOException {
+	public boolean login(String username, String password) {
 		this.username = username;
 		this.password = password;
-		return this.ftps.login(this.username, this.password);
+
+		try {
+			return this.ftp.login(this.username, this.password);
+		} catch (IOException e) {
+			System.out.println("Login failed...");
+			System.out.println(e.toString());
+			return false;
+		}
 	}
 }
