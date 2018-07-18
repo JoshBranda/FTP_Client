@@ -16,7 +16,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
-import java.net.URISyntaxException;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -91,7 +90,7 @@ public class RemoteFileManagerTest {
     }
 
     @Test
-    public void uploadFileToInvalidDestination() throws URISyntaxException
+    public void uploadFileToInvalidDestination()
     {
         File toUpload = new File(getClass().getClassLoader().getResource("test.txt").getFile());
         assertFalse(remoteFileManager.uploadFile(toUpload, "/invalid/test.txt" ));
@@ -100,7 +99,7 @@ public class RemoteFileManagerTest {
     }
 
     @Test
-    public void uploadFileWithinDirectoryToRemoteServer() throws URISyntaxException
+    public void uploadFileWithinDirectoryToRemoteServer()
     {
         File toUpload = new File(getClass().getClassLoader().getResource("testFolder/insideTestFolder.txt").getFile());
         assertTrue(remoteFileManager.uploadFile(toUpload, "test.txt" ));
