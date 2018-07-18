@@ -22,7 +22,7 @@ public class RemoteFileManagerTest {
 
     private FakeFtpServer fakeFtpServer;
 
-    private FTPClient ftp;
+    private FtpConnection conn;
 
     private RemoteFileManager remoteFileManager;
     private  ByteArrayOutputStream outContent;
@@ -44,16 +44,10 @@ public class RemoteFileManagerTest {
 
         fakeFtpServer.start();
 
-        ftp = new FTPClient();
-        ftp.connect("localhost", fakeFtpServer.getServerControlPort());
-
-        int reply = ftp.getReplyCode();
-        if (!FTPReply.isPositiveCompletion(reply))
-        {
-            ftp.disconnect();
-            throw new IOException("Exception in connecting to FTP Server");
-        }
-        ftp.login("user", "password");
+        conn = new client.FtpConnection();
+        conn.connect("localhost", fakeFtpServer.getServerControlPort());
+        conn.login("user", "password");
+        FTPClient ftp = conn.getConnection();
         remoteFileManager = new RemoteFileManager(ftp);
 
         outContent = new ByteArrayOutputStream();
@@ -79,7 +73,7 @@ public class RemoteFileManagerTest {
 
     @AfterEach
     public void teardown() throws IOException {
-        ftp.disconnect();
+        conn.disconnect();
         fakeFtpServer.stop();
         System.setOut(originalOut);
         System.setErr(originalErr);
