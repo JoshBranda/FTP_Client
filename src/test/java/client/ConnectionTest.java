@@ -12,6 +12,10 @@ import org.mockftpserver.fake.filesystem.DirectoryEntry;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
+
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import org.apache.commons.net.ftp.FTPSClient;
@@ -19,9 +23,16 @@ import org.apache.commons.net.ftp.FTPSClient;
 public class ConnectionTest {
 	
     private FakeFtpServer fakeFtpServer;
+    private static final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+    private static final ByteArrayOutputStream errContent = new ByteArrayOutputStream();
+    private static final PrintStream originalOut = System.out;
+    private static final PrintStream originalErr = System.err;
     
     @BeforeEach
     public void setup() {
+        System.setOut(new PrintStream(outContent));
+        System.setErr(new PrintStream(errContent));
+        
         fakeFtpServer = new FakeFtpServer();
         fakeFtpServer.addUserAccount(new UserAccount("user", "password", "/data"));
 
@@ -142,5 +153,7 @@ public class ConnectionTest {
     @AfterEach
     public void tearDown() {
     	fakeFtpServer.stop();
+        System.setOut(originalOut);
+        System.setErr(originalErr);
     }
 }
