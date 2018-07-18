@@ -17,20 +17,16 @@ public class FtpConnection {
 	public FtpConnection() {
 			this.ftp = new FTPClient();
 	}
-
-	public FTPClient connect(String host) {
+	
+	public FTPClient connect(String host, int port) {
 		this.host = host;
+		this.port = port;
 		this.retries = 5;
 		// Retry for 5 times if connection fails
 		do {
 			try {
-				this.ftp.connect(this.host);
-		        int reply = this.ftp.getReplyCode();
-		        if (!FTPReply.isPositiveCompletion(reply))
-		        {
-		            this.ftp.disconnect();
-		            throw new IOException("Exception in connecting to FTP Server");
-		        }
+				this.ftp.connect(this.host, this.port);
+				//System.out.println("Connected to " + this.host + " on port: " + this.port);
 				break;
 			} catch (IOException e) {
 				this.retries -= 1;
@@ -42,25 +38,9 @@ public class FtpConnection {
 		} while (this.retries > 0);
 		return this.ftp;
 	}
-	
-	public FTPClient connect(String host, int port) {
-		this.host = host;
-		this.port = port;
-		this.retries = 5;
-		// Retry for 5 times if connection fails
-		do {
-			try {
-				this.ftp.connect(this.host, this.port);
-				break;
-			} catch (IOException e) {
-				this.retries -= 1;
-				if (this.retries <= 0) {
-					System.out.println("Connection to host failed...");
-					e.printStackTrace();
-				}
-			}
-		} while (this.retries > 0);
-		return this.ftp;
+
+	public boolean isConnected() {
+		return this.ftp.isConnected();
 	}
 	
 	public FTPClient getConnection() {
@@ -79,14 +59,7 @@ public class FtpConnection {
 	public boolean login(String username, String password) {
 		this.username = username;
 		this.password = password;
-		try {
-			System.out.println(username);
-			System.out.println(password);
-			System.out.println(this.ftp.login(username, password));
-		} catch (IOException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
+
 		try {
 			return this.ftp.login(this.username, this.password);
 		} catch (IOException e) {

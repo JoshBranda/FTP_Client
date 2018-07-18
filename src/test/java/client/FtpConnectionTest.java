@@ -7,8 +7,13 @@ import org.mockftpserver.fake.FakeFtpServer;
 import org.mockftpserver.fake.UserAccount;
 import org.mockftpserver.fake.filesystem.UnixFakeFileSystem;
 import org.mockftpserver.fake.filesystem.FileSystem;
+import org.mockftpserver.fake.filesystem.DirectoryEntry;
+
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+
 
 import org.apache.commons.net.ftp.FTPClient;
 
@@ -22,8 +27,9 @@ public class FtpConnectionTest {
         fakeFtpServer.addUserAccount(new UserAccount("user", "password", "/data"));
 
         FileSystem fileSystem = new UnixFakeFileSystem();
+        fileSystem.add(new DirectoryEntry("/data"));
         fakeFtpServer.setFileSystem(fileSystem);
-        fakeFtpServer.setServerControlPort(8463);
+        fakeFtpServer.setServerControlPort(0);
 
         fakeFtpServer.start();
     }
@@ -31,14 +37,10 @@ public class FtpConnectionTest {
     @Test
     public void connect() {
     	FtpConnection conn = new client.FtpConnection();
-    	FTPClient ftp = conn.connect("peedtest.tele2.net");
+
+    	FTPClient ftp = conn.connect("localhost", fakeFtpServer.getServerControlPort());
     	
-    	assertEquals(true, ftp.isConnected());
-    	
-    	FtpConnection conn_w_port = new client.FtpConnection();
-    	FTPClient ftp_w_port = conn_w_port.connect("peedtest.tele2.net",21);
-    	
-    	assertEquals(true, ftp_w_port.isConnected());
+    	assertTrue(ftp.isConnected());
     }
     
     @Test
@@ -47,25 +49,75 @@ public class FtpConnectionTest {
         conn.connect("localhost", fakeFtpServer.getServerControlPort());
     	FTPClient ftp = conn.getConnection();
     	
-    	assertEquals(true,ftp.isAvailable());
+    	assertTrue(ftp.isAvailable());
+    }
+    
+    @Test
+    public void isConnected() {
+    	FtpConnection conn = new client.FtpConnection();
+    	
+    	assertFalse(conn.isConnected());
+    	
+        conn.connect("localhost", fakeFtpServer.getServerControlPort());
+        
+    	assertTrue(conn.isConnected());
     }
     
     @Test
     public void disconnect() {
     	FtpConnection conn = new client.FtpConnection();
+    
         conn.connect("localhost", fakeFtpServer.getServerControlPort());
-        conn.disconnect();
     	FTPClient ftp = conn.getConnection();
     	
-    	assertEquals(false,ftp.isConnected());
+        assertTrue(ftp.isConnected());
+        
+        conn.disconnect();
+    	
+    	assertFalse(ftp.isConnected());
     }
     
     @Test
     public void login() {
     	FtpConnection conn = new client.FtpConnection();
-        conn.connect("peedtest.tele2.net");
+    	conn.connect("localhost", fakeFtpServer.getServerControlPort());
+        FTPClient ftp = conn.getConnection();
+        int reply;
+        
+        // Test valid username and password
+        conn.login("user", "password");
+        ftp = conn.getConnection();
+        reply = ftp.getReplyCode();
+        assertEquals(230,reply); // FTP status code: user logged in
+        
+    	// Test invalid username and password
+        conn.login("fakeuser", "fakepassword");
+        reply = ftp.getReplyCode();
+        assertEquals(530,reply); // FTP error code: User not logged in
 
-        assertEquals(true,conn.login("anonymous", "anonymous"));
+        // Test valid username and invalid password
+        conn.login("user", "fakepassword");
+        ftp = conn.getConnection();
+        reply = ftp.getReplyCode();
+        assertEquals(530,reply); // FTP error code: User not logged in
+        
+        // Test invalid username and valid password
+        conn.login("fakeuser", "password");
+        ftp = conn.getConnection();
+        reply = ftp.getReplyCode();
+        assertEquals(530,reply); // FTP error code: User not logged in  
+        
+        // Test invalid username and valid password
+        conn.login("fakeuser", "");
+        ftp = conn.getConnection();
+        reply = ftp.getReplyCode();
+        assertEquals(501,reply); // FTP error code: syntax error for parameters
+        
+        // Test invalid username and valid password
+        conn.login("", "fakepassword");
+        ftp = conn.getConnection();
+        reply = ftp.getReplyCode();
+        assertEquals(501,reply); // FTP error code: syntax error for parameters   
     }
     
     @AfterEach
