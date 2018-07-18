@@ -17,6 +17,8 @@ import java.io.IOException;
 import java.io.PrintStream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class RemoteFileManagerTest {
 
@@ -75,6 +77,18 @@ public class RemoteFileManagerTest {
     {
         remoteFileManager.displayDirectories();
         assertEquals("foobar", outContent.toString().trim());
+    }
+
+    @Test
+    public void renameValidRemote()
+    {
+        assertTrue(remoteFileManager.renameFile("foobar.txt", "baz.txt"));
+    }
+
+    @Test
+    public void renameInvalidRemote()
+    {
+        assertFalse(remoteFileManager.renameFile("notpresent.txt", "baz.txt"));
     }
 
     @AfterEach

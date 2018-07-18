@@ -51,4 +51,15 @@ public class RemoteFileManager {
                 .map(FTPFile::getName)
                 .collect(Collectors.toList());
     }
+
+    public boolean renameFile(String from, String to)
+    {
+        try {
+            return ftp.rename(from, to);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return false;
+    }
 }
