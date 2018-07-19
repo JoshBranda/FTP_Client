@@ -63,6 +63,18 @@ public class RemoteFileManager {
                 .collect(Collectors.toList());
     }
 
+    // Returns true if successfully completed, otherwise false
+    // IOException also catches FTPConnectionClosedException (if FTP connection closes unexpectedly)
+    public boolean removeFile(String pathname) {
+        try {
+            return ftp.deleteFile(pathname);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+
     public boolean uploadFile(File fileToUpload, String destPath){
         try
         {
