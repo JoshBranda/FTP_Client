@@ -3,6 +3,9 @@ package client;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
@@ -20,32 +23,40 @@ public class RemoteFileManager {
 
     public void displayFiles()
     {
-        try {
+        try
+        {
             List<String> files = getFiles();
             files.stream().forEach(System.out::println);
-        } catch (IOException e) {
-            e.printStackTrace();
+        }
+        catch (IOException e)
+        {
+            throw new RuntimeException(e);
         }
     }
 
     public void displayDirectories()
     {
-        try {
+        try
+        {
             List<String> files = getDirectories();
             files.stream().forEach(System.out::println);
-        } catch (IOException e) {
-            e.printStackTrace();
+        }
+        catch (IOException e)
+        {
+            throw new RuntimeException(e);
         }
     }
 
-    public List<String> getFiles() throws IOException {
+    public List<String> getFiles() throws IOException
+    {
             FTPFile[] files  = ftp.listFiles();
             return Arrays.stream(files).filter(f->f.isFile())
                     .map(FTPFile::getName)
                     .collect(Collectors.toList());
     }
 
-    public List<String> getDirectories() throws IOException {
+    public List<String> getDirectories() throws IOException
+    {
         FTPFile[] files  = ftp.listDirectories();
         return Arrays.stream(files)
                 .map(FTPFile::getName)
@@ -63,4 +74,15 @@ public class RemoteFileManager {
         return false;
     }
 
+
+    public boolean uploadFile(File fileToUpload, String destPath){
+        try
+        {
+             return ftp.storeFile(destPath, new FileInputStream(fileToUpload));
+        }
+        catch (IOException ex)
+        {
+            throw new RuntimeException(ex);
+        }
+    }
 }
