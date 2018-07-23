@@ -16,6 +16,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -123,6 +125,44 @@ public class RemoteFileManagerTest {
         assertTrue(remoteFileManager.uploadFile(toUpload, "test.txt" ));
         remoteFileManager.displayFiles();
         assertTrue(outContent.toString().contains("test.txt"));
+    }
+
+    @Test
+    public void uploadMultipleFilesToRemoteServer()
+    {
+        File toUpload = new File(getClass().getClassLoader().getResource("test.txt").getFile());
+        File toUpload2 = new File(getClass().getClassLoader().getResource("joshTest.txt").getFile());
+        List<File> files = new ArrayList<>();
+        files.add(toUpload);
+        files.add(toUpload2);
+        String destFolder = "/data/";
+
+        assertTrue(remoteFileManager.uploadMultipleFiles(files, destFolder));
+        remoteFileManager.displayFiles();
+        assertTrue(outContent.toString().contains("test.txt"));
+        assertTrue(outContent.toString().contains("joshTest.txt"));
+    }
+
+    @Test
+    public void uploadNullToRemoteServer()
+    {
+        List<File> files = null;
+        String destFolder = "";
+
+        assertFalse(remoteFileManager.uploadMultipleFiles(files, destFolder));
+        remoteFileManager.displayFiles();
+        assertFalse(outContent.toString().contains("test.txt"));
+    }
+
+    @Test
+    public void uploadEmptyListOfFilesToRemoteServer()
+    {
+        List<File> files = new ArrayList<>();
+        String destFolder = "";
+
+        assertFalse(remoteFileManager.uploadMultipleFiles(files, destFolder));
+        remoteFileManager.displayFiles();
+        assertFalse(outContent.toString().contains("test.txt"));
     }
 
     @AfterEach

@@ -85,4 +85,21 @@ public class RemoteFileManager {
             throw new RuntimeException(ex);
         }
     }
+
+    public boolean uploadMultipleFiles (List<File> filesToUpload, String destFolder) {
+        boolean result = true;
+
+        if (filesToUpload == null || filesToUpload.size() == 0) {
+            return false;
+        }
+
+        for (File file : filesToUpload) {
+
+            if (uploadFile(file, destFolder + file.getName()) == false) {
+                result = false;
+            }
+        }
+
+        return result;
+    }
 }
