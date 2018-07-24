@@ -13,6 +13,7 @@ import org.mockftpserver.fake.filesystem.FileSystem;
 import org.mockftpserver.fake.filesystem.UnixFakeFileSystem;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
 
@@ -20,6 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class RemoteFileManagerTest {
 
@@ -94,6 +96,33 @@ public class RemoteFileManagerTest {
     public void removeFileInFilesystem()
     {
         assertTrue(remoteFileManager.removeFile("/remove/potato.txt"));
+    }
+
+    @Test
+    public void uploadFileToRemoteServer()
+    {
+        File toUpload = new File(getClass().getClassLoader().getResource("test.txt").getFile());
+        assertTrue(remoteFileManager.uploadFile(toUpload, "test.txt" ));
+        remoteFileManager.displayFiles();
+        assertTrue(outContent.toString().contains("test.txt"));
+    }
+
+    @Test
+    public void uploadFileToInvalidDestination()
+    {
+        File toUpload = new File(getClass().getClassLoader().getResource("test.txt").getFile());
+        assertFalse(remoteFileManager.uploadFile(toUpload, "/invalid/test.txt" ));
+        remoteFileManager.displayFiles();
+        assertFalse(outContent.toString().contains("test.txt"));
+    }
+
+    @Test
+    public void uploadFileWithinDirectoryToRemoteServer()
+    {
+        File toUpload = new File(getClass().getClassLoader().getResource("testFolder/insideTestFolder.txt").getFile());
+        assertTrue(remoteFileManager.uploadFile(toUpload, "test.txt" ));
+        remoteFileManager.displayFiles();
+        assertTrue(outContent.toString().contains("test.txt"));
     }
 
     @AfterEach
