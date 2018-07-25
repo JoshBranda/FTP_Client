@@ -63,6 +63,18 @@ public class RemoteFileManager {
                 .collect(Collectors.toList());
     }
 
+
+    public boolean renameFile(String from, String to)
+    {
+        try {
+            return ftp.rename(from, to);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return false;
+    }
+
     // Returns true if successfully completed, otherwise false
     // IOException also catches FTPConnectionClosedException (if FTP connection closes unexpectedly)
     public boolean removeFile(String pathname) {
@@ -86,6 +98,18 @@ public class RemoteFileManager {
         }
     }
 
+
+    public boolean makeDirectory(String pathname){
+        try {
+            return ftp.makeDirectory(pathname);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return false;
+
+    }
+
     public boolean uploadMultipleFiles (List<File> filesToUpload, String destFolder) {
         boolean result = true;
 
@@ -103,3 +127,5 @@ public class RemoteFileManager {
         return result;
     }
 }
+
+
