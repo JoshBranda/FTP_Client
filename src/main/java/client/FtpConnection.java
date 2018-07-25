@@ -66,4 +66,11 @@ public class FtpConnection {
 			return false;
 		}
 	}
+	
+	public String getInfo() {
+		// Return connection info as a string
+		// e.g. localhost:8000
+		return this.host + ":" + String.valueOf(this.port);
+	}
+	
 }
