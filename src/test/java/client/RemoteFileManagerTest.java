@@ -28,6 +28,7 @@ public class RemoteFileManagerTest {
     private FakeFtpServer fakeFtpServer;
 
     private FtpConnection conn;
+    private FTPClient ftp;
 
     private RemoteFileManager remoteFileManager;
     private  ByteArrayOutputStream outContent;
@@ -56,7 +57,7 @@ public class RemoteFileManagerTest {
         conn = new client.FtpConnection();
         conn.connect("localhost", fakeFtpServer.getServerControlPort());
         conn.login("user", "password");
-        FTPClient ftp = conn.getConnection();
+        ftp = conn.getConnection();
         remoteFileManager = new RemoteFileManager(ftp);
 
         outContent = new ByteArrayOutputStream();
