@@ -95,6 +95,17 @@ public class RemoteFileManager {
         }
     }
 
+
+    public boolean makeDirectory(String pathname){
+        try {
+            return ftp.makeDirectory(pathname);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return false;
+
+    }
     public boolean downloadFile(String sourcePath, String destPath)
     {
         File downloadedFile = new File(destPath);
@@ -118,3 +129,6 @@ public class RemoteFileManager {
     }
 
 }
+
+}
+

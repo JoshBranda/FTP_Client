@@ -22,6 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+
 public class RemoteFileManagerTest {
 
     private FakeFtpServer fakeFtpServer;
@@ -148,6 +149,53 @@ public class RemoteFileManagerTest {
         remoteFileManager.displayFiles();
         assertTrue(outContent.toString().contains("test.txt"));
 
+    }
+
+    @Test
+    public void makeValidDirectoryParallelToHomeDirectory()
+    {
+        assertTrue(remoteFileManager.makeDirectory("/create"));
+
+        try {
+            ftp.changeToParentDirectory();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        remoteFileManager.displayDirectories();
+        assertTrue(outContent.toString().contains("create"));
+    }
+
+    @Test
+    public void makeValidDirectoryAbsolutePath()
+    {
+        assertTrue(remoteFileManager.makeDirectory("/data/foobar/absolute"));
+        try {
+            ftp.changeWorkingDirectory("/data/foobar");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        remoteFileManager.displayDirectories();
+        assertTrue(outContent.toString().contains("absolute"));
+    }
+
+    @Test
+    public void makeValidDirectoryRelativePath()
+    {
+        try {
+            ftp.changeWorkingDirectory("/data/foobar");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        assertTrue(remoteFileManager.makeDirectory("./relative"));
+        remoteFileManager.displayDirectories();
+        assertTrue(outContent.toString().contains("relative"));
+    }
+
+    @Test
+    public void makeInvalidDirectoryWithBadPath()
+    {
+        assertFalse(remoteFileManager.makeDirectory("/data/bad_path/create"));
     }
 
     @Test
