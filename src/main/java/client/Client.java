@@ -7,31 +7,30 @@ import org.apache.commons.net.ftp.FTPFile;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPClientConfig;
 
+// Lee's code for login prompts
+import java.util.Scanner; // For User input.
+
 public class Client {
 	public static void main(String[] args) {
-		FTPClient ftp = new FTPClient();
-		FTPClientConfig config = new FTPClientConfig();
+
+		// Initializing the scanner object for prompts
+		Scanner input = new Scanner(System.in);
+
 		// user and pass for testing connections
-		String username = "anonymous";
-		String password = "anonymous";
 		System.out.println("running ftp client...");
-		// Test ftp client connection
-		String server = "speedtest.tele2.net";
-		try {
-			ftp.connect(server);
-		    System.out.println("Connected to " + server + ".");
-		    System.out.print(ftp.getReplyString());
-		    ftp.login(username, password);
-		    FTPFile [] files = ftp.listFiles();
-	        for (FTPFile file : files) {
-	            System.out.println(file.getName());
-	        }
-		} catch (SocketException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+
+		// Login prompts code
+		System.out.println("Please enter the server you wish to connect to:");
+		String server = input.next();
+		input.nextLine();
+
+		System.out.println("Please enter your username:");
+		String username = input.next();
+		input.nextLine();
+
+		System.out.println("Please enter your password:");
+		String password = input.next();
+		input.nextLine();
+
 	}
 }
