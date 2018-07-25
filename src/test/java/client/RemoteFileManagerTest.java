@@ -14,6 +14,7 @@ import org.mockftpserver.fake.filesystem.FileSystem;
 import org.mockftpserver.fake.filesystem.UnixFakeFileSystem;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.Arrays;
@@ -40,9 +41,13 @@ public class RemoteFileManagerTest {
         fakeFtpServer.addUserAccount(new UserAccount("user", "password", "/data"));
 
         FileSystem fileSystem = new UnixFakeFileSystem();
+        //Directory & file create to test display functions
         fileSystem.add(new DirectoryEntry("/data"));
         fileSystem.add(new DirectoryEntry("/data/foobar"));
         fileSystem.add(new FileEntry("/data/foobar.txt", "abcdef 1234567890"));
+        //Directory & file created to test remove functions
+        fileSystem.add(new DirectoryEntry("/remove"));
+        fileSystem.add(new FileEntry("/remove/potato.txt", "abcdef 1234567890"));
         fakeFtpServer.setFileSystem(fileSystem);
         fakeFtpServer.setServerControlPort(0);
 
@@ -111,6 +116,44 @@ public class RemoteFileManagerTest {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+    public void removeFileNotInFilesystem()
+    {
+        assertFalse(remoteFileManager.removeFile("/remove/pizza_party.txt"));
+    }
+
+    @Test
+    public void removeFileInFilesystem()
+    {
+        assertTrue(remoteFileManager.removeFile("/remove/potato.txt"));
+    }
+
+    @Test
+    public void uploadFileToRemoteServer()
+    {
+        File toUpload = new File(getClass().getClassLoader().getResource("test.txt").getFile());
+        assertTrue(remoteFileManager.uploadFile(toUpload, "test.txt" ));
+        remoteFileManager.displayFiles();
+        assertTrue(outContent.toString().contains("test.txt"));
+    }
+
+    @Test
+    public void uploadFileToInvalidDestination()
+    {
+        File toUpload = new File(getClass().getClassLoader().getResource("test.txt").getFile());
+        assertFalse(remoteFileManager.uploadFile(toUpload, "/invalid/test.txt" ));
+        remoteFileManager.displayFiles();
+        assertFalse(outContent.toString().contains("test.txt"));
+    }
+
+    @Test
+    public void uploadFileWithinDirectoryToRemoteServer()
+    {
+        File toUpload = new File(getClass().getClassLoader().getResource("testFolder/insideTestFolder.txt").getFile());
+        assertTrue(remoteFileManager.uploadFile(toUpload, "test.txt" ));
+        remoteFileManager.displayFiles();
+        assertTrue(outContent.toString().contains("test.txt"));
+
     }
 
     @AfterEach
