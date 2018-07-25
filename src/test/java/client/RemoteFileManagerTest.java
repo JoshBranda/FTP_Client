@@ -102,20 +102,20 @@ public class RemoteFileManagerTest {
     }
 
     @Test
-    public void renameInvalidRemote()
-    {
+    public void renameInvalidRemote() {
         assertFalse(remoteFileManager.renameFile("notpresent.txt", "baz.txt"));
         try {
             FTPFile[] ftpFiles = ftp.listFiles();
             //There should be no notpresent.txt
-            assertFalse(Arrays.stream(ftpFiles).anyMatch(f->f.getName().equals("notpresent.txt")));
+            assertFalse(Arrays.stream(ftpFiles).anyMatch(f -> f.getName().equals("notpresent.txt")));
             //There should be no baz.txt
-            assertFalse(Arrays.stream(ftpFiles).anyMatch(f->f.getName().equals("baz.txt")));
+            assertFalse(Arrays.stream(ftpFiles).anyMatch(f -> f.getName().equals("baz.txt")));
             //There should be a foobar.txt
-            assertTrue(Arrays.stream(ftpFiles).anyMatch(f->f.getName().equals("foobar.txt")));
+            assertTrue(Arrays.stream(ftpFiles).anyMatch(f -> f.getName().equals("foobar.txt")));
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
 
     public void removeFileNotInFilesystem()
     {
