@@ -112,6 +112,7 @@ public class RemoteFileManagerTest {
         }
     }
 
+    @Test
     public void removeFileNotInFilesystem()
     {
         assertFalse(remoteFileManager.removeFile("/remove/pizza_party.txt"));
