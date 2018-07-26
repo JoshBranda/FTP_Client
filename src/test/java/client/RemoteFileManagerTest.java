@@ -198,6 +198,23 @@ public class RemoteFileManagerTest {
         assertFalse(remoteFileManager.makeDirectory("/data/bad_path/create"));
     }
 
+    @Test
+    public void downloadFileFromRemoteServer()
+    {
+        String destPath = "src/test/resources/foobar.txt";
+        String sourcePath = "foobar.txt";
+        assertTrue(remoteFileManager.downloadFile(sourcePath, destPath));
+        new File(destPath).delete();
+    }
+
+    @Test
+    public void TryDownloadInvalidFileFromRemoteServer()
+    {
+        String destPath = "src/test/resources/foobar.txt";
+        String sourcePath = "invalid.txt";
+        assertFalse(remoteFileManager.downloadFile(sourcePath, destPath));
+    }
+
     @AfterEach
     public void teardown() throws IOException {
         conn.disconnect();
