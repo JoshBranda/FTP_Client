@@ -114,6 +114,7 @@ public class RemoteFileManagerTest {
         }
     }
 
+    @Test
     public void removeFileNotInFilesystem()
     {
         assertFalse(remoteFileManager.removeFile("/remove/pizza_party.txt"));
@@ -236,6 +237,23 @@ public class RemoteFileManagerTest {
         assertFalse(remoteFileManager.uploadMultipleFiles(files, destFolder));
         remoteFileManager.displayFiles();
         assertFalse(outContent.toString().contains("test.txt"));
+    }
+
+    @Test
+    public void downloadFileFromRemoteServer()
+    {
+        String destPath = "src/test/resources/foobar.txt";
+        String sourcePath = "foobar.txt";
+        assertTrue(remoteFileManager.downloadFile(sourcePath, destPath));
+        new File(destPath).delete();
+    }
+
+    @Test
+    public void TryDownloadInvalidFileFromRemoteServer()
+    {
+        String destPath = "src/test/resources/foobar.txt";
+        String sourcePath = "invalid.txt";
+        assertFalse(remoteFileManager.downloadFile(sourcePath, destPath));
     }
 
     @AfterEach
