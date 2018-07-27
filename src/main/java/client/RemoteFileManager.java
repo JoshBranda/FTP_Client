@@ -3,10 +3,7 @@ package client;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.io.*;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -98,4 +95,39 @@ public class RemoteFileManager {
         }
     }
 
+
+    public boolean makeDirectory(String pathname){
+        try {
+            return ftp.makeDirectory(pathname);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return false;
+
+    }
+    public boolean downloadFile(String sourcePath, String destPath)
+    {
+        File downloadedFile = new File(destPath);
+        try
+        {
+            OutputStream outputStream = new BufferedOutputStream(new FileOutputStream(downloadedFile));
+            boolean success = ftp.retrieveFile(sourcePath, outputStream);
+            if(!success)
+            {
+                downloadedFile.delete();
+            }
+            outputStream.close();
+            return success;
+        }
+        catch (IOException ex)
+        {
+            downloadedFile.delete();
+            return false;
+        }
+
+    }
+
 }
+
+

@@ -2,7 +2,6 @@ package client;
 
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
-import org.apache.commons.net.ftp.FTPReply;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -22,6 +21,7 @@ import java.util.Arrays;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
 
 public class RemoteFileManagerTest {
 
@@ -112,6 +112,7 @@ public class RemoteFileManagerTest {
         }
     }
 
+    @Test
     public void removeFileNotInFilesystem()
     {
         assertFalse(remoteFileManager.removeFile("/remove/pizza_party.txt"));
@@ -149,6 +150,70 @@ public class RemoteFileManagerTest {
         remoteFileManager.displayFiles();
         assertTrue(outContent.toString().contains("test.txt"));
 
+    }
+
+    @Test
+    public void makeValidDirectoryParallelToHomeDirectory()
+    {
+        assertTrue(remoteFileManager.makeDirectory("/create"));
+
+        try {
+            ftp.changeToParentDirectory();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        remoteFileManager.displayDirectories();
+        assertTrue(outContent.toString().contains("create"));
+    }
+
+    @Test
+    public void makeValidDirectoryAbsolutePath()
+    {
+        assertTrue(remoteFileManager.makeDirectory("/data/foobar/absolute"));
+        try {
+            ftp.changeWorkingDirectory("/data/foobar");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        remoteFileManager.displayDirectories();
+        assertTrue(outContent.toString().contains("absolute"));
+    }
+
+    @Test
+    public void makeValidDirectoryRelativePath()
+    {
+        try {
+            ftp.changeWorkingDirectory("/data/foobar");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        assertTrue(remoteFileManager.makeDirectory("./relative"));
+        remoteFileManager.displayDirectories();
+        assertTrue(outContent.toString().contains("relative"));
+    }
+
+    @Test
+    public void makeInvalidDirectoryWithBadPath()
+    {
+        assertFalse(remoteFileManager.makeDirectory("/data/bad_path/create"));
+    }
+
+    @Test
+    public void downloadFileFromRemoteServer()
+    {
+        String destPath = "src/test/resources/foobar.txt";
+        String sourcePath = "foobar.txt";
+        assertTrue(remoteFileManager.downloadFile(sourcePath, destPath));
+        new File(destPath).delete();
+    }
+
+    @Test
+    public void TryDownloadInvalidFileFromRemoteServer()
+    {
+        String destPath = "src/test/resources/foobar.txt";
+        String sourcePath = "invalid.txt";
+        assertFalse(remoteFileManager.downloadFile(sourcePath, destPath));
     }
 
     @AfterEach
