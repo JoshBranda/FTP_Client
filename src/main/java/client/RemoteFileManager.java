@@ -128,6 +128,26 @@ public class RemoteFileManager {
 
     }
 
+    public boolean downloadMultipleFiles(String sourceFolder, List<String> fileNames, String destFolder) {
+        boolean result = true;
+
+        if (fileNames == null || fileNames.size() == 0) {
+            return false;
+        }
+
+        if (sourceFolder == null || destFolder == null) {
+            return false;
+        }
+
+        for (String fileName : fileNames) {
+            if (!downloadFile(sourceFolder + fileName, destFolder + fileName)) {
+                result = false;
+            }
+        }
+
+        return result;
+    }
+
     public boolean uploadMultipleFiles (List<File> filesToUpload, String destFolder) {
         boolean result = true;
 
