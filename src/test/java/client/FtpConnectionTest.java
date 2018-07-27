@@ -145,6 +145,26 @@ public class FtpConnectionTest {
         assertEquals(501,reply); // FTP error code: syntax error for parameters   
     }
     
+    @Test
+    public void getInfo() {
+    	int port = fakeFtpServer.getServerControlPort();
+    	FtpConnection conn = new client.FtpConnection();
+    	conn.connect("localhost", port);
+    	
+    	assertEquals(String.format("localhost:%d", port), conn.getInfo());
+    }
+    
+    @Test
+    public void saveConnection() {
+    	int port = fakeFtpServer.getServerControlPort();
+    	FtpConnection conn = new client.FtpConnection();
+    	conn.connect("localhost", port);
+    	String conn_info = conn.getInfo();
+    	conn.saveConnection("test", conn_info);
+
+    	assertFalse(conn.saveConnection("test", conn_info));
+    }
+    
     @AfterEach
     public void tearDown() {
     	fakeFtpServer.stop();

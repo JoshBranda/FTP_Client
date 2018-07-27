@@ -1,8 +1,17 @@
 package client;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.commons.net.ftp.FTPClient;
+import org.yaml.snakeyaml.Yaml;
 
 /* FTP connection */
 public class FtpConnection {
@@ -12,9 +21,11 @@ public class FtpConnection {
 	private String username;
 	private String password;
 	private int retries;
+	private String config_file;
 	
 	public FtpConnection() {
 			this.ftp = new FTPClient();
+			this.config_file = "src/main/resources/client_config.yaml";
 	}
 	
 	public FTPClient connect(String host, int port) {
@@ -73,4 +84,31 @@ public class FtpConnection {
 		return this.host + ":" + String.valueOf(this.port);
 	}
 	
+	public boolean saveConnection(String connection_name, String connection_info) {
+		Yaml config_yaml = new Yaml();
+
+		//Map <String, Object> connection_entries = new HashMap<String, Object>();
+		try {
+			InputStream config = new FileInputStream(this.config_file);
+			Map<String, String> connection_entries = (Map<String,String>) config_yaml.load(config);
+			connection_entries.put(connection_name, connection_info);
+			config_yaml.dump(connection_entries);
+		} catch (FileNotFoundException e) {
+
+				Map <String, String> connection_entries = new HashMap<String, String>();
+				connection_entries.put(connection_name, connection_info);
+				config_yaml.dump(connection_entries);
+				try {
+					BufferedWriter config_writer = new BufferedWriter(new FileWriter(this.config_file));
+					config_yaml.dump(connection_entries,config_writer);
+					//config_writer.write(config_yaml.dump(connection_entries));
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				
+				System.out.println(config_yaml.dump(connection_entries));
+		}
+		return true;
+	}
 }
