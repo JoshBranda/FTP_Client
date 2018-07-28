@@ -1,17 +1,14 @@
 package client;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.net.ftp.FTPClient;
+import org.yaml.snakeyaml.DumperOptions;
+import org.yaml.snakeyaml.DumperOptions.FlowStyle;
 import org.yaml.snakeyaml.Yaml;
+import org.yaml.snakeyaml.representer.Representer;
 
 /* FTP connection */
 public class FtpConnection {
@@ -22,12 +19,18 @@ public class FtpConnection {
 	private String password;
 	private int retries;
 	private String config_file;
-	
+
 	public FtpConnection() {
-			this.ftp = new FTPClient();
-			this.config_file = "src/main/resources/client_config.yaml";
+		this.ftp = new FTPClient();
+		this.config_file = "src/main/client_config.yaml";
 	}
-	
+
+	// constructor for alternative config file location
+	public FtpConnection(String config_file) {
+		this.ftp = new FTPClient();
+		this.config_file = config_file;
+	}
+
 	public FTPClient connect(String host, int port) {
 		this.host = host;
 		this.port = port;
@@ -48,7 +51,7 @@ public class FtpConnection {
 		} while (this.retries > 0);
 		return this.ftp;
 	}
-	
+
 	public void disconnect() {
 		try {
 			this.ftp.disconnect();
@@ -60,11 +63,11 @@ public class FtpConnection {
 	public boolean isConnected() {
 		return this.ftp.isConnected();
 	}
-	
+
 	public FTPClient getConnection() {
 		return this.ftp;
 	}
-	
+
 	public boolean login(String username, String password) {
 		this.username = username;
 		this.password = password;
@@ -77,38 +80,53 @@ public class FtpConnection {
 			return false;
 		}
 	}
-	
+
 	public String getInfo() {
 		// Return connection info as a string
 		// e.g. localhost:8000
 		return this.host + ":" + String.valueOf(this.port);
 	}
-	
+
+	@SuppressWarnings("unchecked")
 	public boolean saveConnection(String connection_name, String connection_info) {
-		Yaml config_yaml = new Yaml();
+		// To make config file consistent with yaml style I need to specify custom
+		// flow style to BLOCK. Used the sample code from here: 
+		// https://www.javatips.net/api/org.yaml.snakeyaml.dumperoptions.flowstyle
+		DumperOptions options = new DumperOptions();
+		options.setAllowReadOnlyProperties(true);
+		options.setDefaultFlowStyle(FlowStyle.BLOCK);
+		Yaml yaml = new Yaml(new Representer(), options);
 
-		//Map <String, Object> connection_entries = new HashMap<String, Object>();
-		try {
-			InputStream config = new FileInputStream(this.config_file);
-			Map<String, String> connection_entries = (Map<String,String>) config_yaml.load(config);
-			connection_entries.put(connection_name, connection_info);
-			config_yaml.dump(connection_entries);
-		} catch (FileNotFoundException e) {
+		FileWriter config_writer;
+		Map<String, Object> connection_entries;
+		File config_file = new File(this.config_file);
 
-				Map <String, String> connection_entries = new HashMap<String, String>();
-				connection_entries.put(connection_name, connection_info);
-				config_yaml.dump(connection_entries);
-				try {
-					BufferedWriter config_writer = new BufferedWriter(new FileWriter(this.config_file));
-					config_yaml.dump(connection_entries,config_writer);
-					//config_writer.write(config_yaml.dump(connection_entries));
-				} catch (IOException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
-				
-				System.out.println(config_yaml.dump(connection_entries));
+		// create connection object
+		Map<String, Object> connection = new HashMap<String, Object>();
+		String[] connection_split = connection_info.split(":"); 
+		connection.put("host", connection_split[0]);
+		connection.put("port", Integer.valueOf(connection_split[1]));
+
+		if (config_file.exists()) {
+			InputStream config;
+			try {
+				config = new FileInputStream(this.config_file);
+			} catch (FileNotFoundException e) {
+				throw new RuntimeException(e);
+			}
+			connection_entries = (Map<String, Object>) yaml.load(config);
+		} else {
+			connection_entries = new HashMap<String, Object>();
 		}
+		connection_entries.put(connection_name, connection);
+		// create writer for the config file
+		try {
+			config_writer = new FileWriter(this.config_file);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+		yaml.dump(connection_entries, config_writer);
+
 		return true;
 	}
 }

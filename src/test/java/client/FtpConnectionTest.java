@@ -12,12 +12,10 @@ import org.mockftpserver.fake.filesystem.DirectoryEntry;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
-
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
+import java.io.*;
+import java.nio.file.*;
 
 import org.apache.commons.net.ftp.FTPClient;
 
@@ -156,15 +154,39 @@ public class FtpConnectionTest {
     
     @Test
     public void saveConnection() {
-    	int port = fakeFtpServer.getServerControlPort();
-    	FtpConnection conn = new client.FtpConnection();
-    	conn.connect("localhost", port);
-    	String conn_info = conn.getInfo();
-    	conn.saveConnection("test", conn_info);
+    	String test_config_file = "src/test/resources/testFolder/client_config.yaml";
+    	FtpConnection conn = new client.FtpConnection(test_config_file);
 
-    	assertFalse(conn.saveConnection("test", conn_info));
+    	assertTrue(conn.saveConnection("test1", "fakehost1:1"));
+    	assertTrue(conn.saveConnection("test2", "fakehost2:2"));
+    	assertTrue(conn.saveConnection("test3", "fakehost3:3"));
+
+    	// making sure the output config file is 
+    	// matching expected content
+    	String expected_str = "test1:\n" + 
+				"  port: 1\n" + 
+				"  host: fakehost1\n" + 
+				"test2:\n" + 
+				"  port: 2\n" + 
+				"  host: fakehost2\n" + 
+				"test3:\n" + 
+				"  port: 3\n" + 
+				"  host: fakehost3\n";
+    	try {
+			Path file_path = Paths.get(test_config_file);
+			byte[] config_content = Files.readAllBytes(file_path);
+			String config_str = new String(config_content);
+
+			assertEquals(config_str, expected_str);
+
+			// cleanup after comparison is done
+			Files.delete(file_path);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
     }
-    
+
     @AfterEach
     public void tearDown() {
     	fakeFtpServer.stop();
