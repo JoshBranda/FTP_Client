@@ -148,8 +148,9 @@ public class FtpConnectionTest {
     	int port = fakeFtpServer.getServerControlPort();
     	FtpConnection conn = new client.FtpConnection();
     	conn.connect("localhost", port);
+    	conn.login("fakeuser", "fakepass");
     	
-    	assertEquals(String.format("localhost:%d", port), conn.getInfo());
+    	assertEquals(String.format("localhost:%d:fakeuser:fakepass", port), conn.getInfo());
     }
     
     @Test
@@ -172,6 +173,46 @@ public class FtpConnectionTest {
 				"test3:\n" + 
 				"  port: 3\n" + 
 				"  host: fakehost3\n";
+    	try {
+			Path file_path = Paths.get(test_config_file);
+			byte[] config_content = Files.readAllBytes(file_path);
+			String config_str = new String(config_content);
+
+			assertEquals(config_str, expected_str);
+
+			// cleanup after comparison is done
+			Files.delete(file_path);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    }
+    
+    @Test
+    public void saveConnectionWithLogin() {
+    	String test_config_file = "src/test/resources/testFolder/client_config.yaml";
+    	FtpConnection conn = new client.FtpConnection(test_config_file);
+
+    	assertTrue(conn.saveConnection("test1", "fakehost1:1:fakeuser1:pass1"));
+    	assertTrue(conn.saveConnection("test2", "fakehost2:2:fakeuser2"));
+    	assertTrue(conn.saveConnection("test3", "fakehost3:3:fakeuser3:pass3"));
+
+    	// making sure the output config file is 
+    	// matching expected content
+    	String expected_str = "test1:\n" + 
+				"  password: pass1\n" + 
+				"  port: 1\n" + 
+				"  host: fakehost1\n" + 
+				"  username: fakeuser1\n" + 
+				"test2:\n" + 
+				"  port: 2\n" + 
+				"  host: fakehost2\n" + 
+				"  username: fakeuser2\n" + 
+				"test3:\n" + 
+				"  password: pass3\n" + 
+				"  port: 3\n" + 
+				"  host: fakehost3\n" + 
+				"  username: fakeuser3\n";
     	try {
 			Path file_path = Paths.get(test_config_file);
 			byte[] config_content = Files.readAllBytes(file_path);

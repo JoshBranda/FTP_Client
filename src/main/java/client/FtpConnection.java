@@ -23,12 +23,16 @@ public class FtpConnection {
 	public FtpConnection() {
 		this.ftp = new FTPClient();
 		this.config_file = "src/main/client_config.yaml";
+		this.username = "anonymous";
+		this.password = "anonymous";
 	}
 
 	// constructor for alternative config file location
 	public FtpConnection(String config_file) {
 		this.ftp = new FTPClient();
 		this.config_file = config_file;
+		this.username = "anonymous";
+		this.password = "anonymous";
 	}
 
 	public FTPClient connect(String host, int port) {
@@ -84,7 +88,8 @@ public class FtpConnection {
 	public String getInfo() {
 		// Return connection info as a string
 		// e.g. localhost:8000
-		return this.host + ":" + String.valueOf(this.port);
+		return this.host + ":" + String.valueOf(this.port) +":"
+		                 + this.username + ":" + this.password ;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -104,8 +109,16 @@ public class FtpConnection {
 		// create connection object
 		Map<String, Object> connection = new HashMap<String, Object>();
 		String[] connection_split = connection_info.split(":"); 
-		connection.put("host", connection_split[0]);
-		connection.put("port", Integer.valueOf(connection_split[1]));
+		String[] connection_info_key = {"host","port","username","password"};
+		int i = 0;
+		for (String info : connection_split) {
+			if (i == 1) {
+				// convert port number to int
+				connection.put(connection_info_key[i++], Integer.valueOf(info));
+			} else {
+				connection.put(connection_info_key[i++], info);
+			}
+		}
 
 		if (config_file.exists()) {
 			InputStream config;
