@@ -33,6 +33,10 @@ dependencies {
 
 }
 
+run {
+    standardInput = System.in
+}
+
 test {
     useJUnitPlatform()
         testLogging {
