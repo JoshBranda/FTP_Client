@@ -269,7 +269,8 @@ public class RemoteFileManagerTest {
         files.add(fileName1);
         files.add(fileName2);
 
-        assertTrue(remoteFileManager.downloadMultipleFiles(sourceFolder, files ,destFolder));
+        List<String> result = remoteFileManager.downloadMultipleFiles(sourceFolder, files ,destFolder);
+        assertEquals(result, null);
         new File(destFolder + fileName1).delete();
         new File(destFolder + fileName2).delete();
     }
@@ -281,17 +282,19 @@ public class RemoteFileManagerTest {
         String destFolder = "src/test/resources/";
         String sourceFolder = "";
 
-        assertFalse(remoteFileManager.downloadMultipleFiles(sourceFolder, files ,destFolder));
+        List<String> result = remoteFileManager.downloadMultipleFiles(sourceFolder, files ,destFolder);
+        assertTrue(result.get(0).equals("No files specified"));
     }
 
     @Test
     public void downloadFilesFromRemoteServerEmptyList()
     {
-        List<String> files = null;
+        List<String> files = new ArrayList<>();
         String destFolder = "src/test/resources/";
         String sourceFolder = "";
 
-        assertFalse(remoteFileManager.downloadMultipleFiles(sourceFolder, files ,destFolder));
+        List<String> result = remoteFileManager.downloadMultipleFiles(sourceFolder, files ,destFolder);
+        assertTrue(result.get(0).equals("No files specified"));
     }
 
     @Test
@@ -305,7 +308,8 @@ public class RemoteFileManagerTest {
         files.add(fileName1);
         files.add(fileName2);
 
-        assertFalse(remoteFileManager.downloadMultipleFiles(sourceFolder, files ,destFolder));
+        List<String> result = remoteFileManager.downloadMultipleFiles(sourceFolder, files ,destFolder);
+        assertTrue(result.get(0).equals("Invalid source folder"));
     }
 
     @Test
@@ -319,7 +323,8 @@ public class RemoteFileManagerTest {
         files.add(fileName1);
         files.add(fileName2);
 
-        assertFalse(remoteFileManager.downloadMultipleFiles(sourceFolder, files ,destFolder));
+        List<String> result = remoteFileManager.downloadMultipleFiles(sourceFolder, files ,destFolder);
+        assertTrue(result.get(0).equals("pizzaParty.txt"));
         new File(destFolder + fileName1).delete();
     }
 
