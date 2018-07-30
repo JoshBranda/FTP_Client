@@ -49,6 +49,11 @@ public class RemoteFileManagerTest {
         //Directory & file created to test remove functions
         fileSystem.add(new DirectoryEntry("/remove"));
         fileSystem.add(new FileEntry("/remove/potato.txt", "abcdef 1234567890"));
+        fileSystem.add(new DirectoryEntry("/empty"));
+        fileSystem.add(new DirectoryEntry("/deep"));
+        fileSystem.add(new DirectoryEntry("/deep/deep2"));
+        fileSystem.add(new FileEntry("/deep/deep.txt"));
+        fileSystem.add(new FileEntry("/deep/deep2/deep2.txt"));
         fakeFtpServer.setFileSystem(fileSystem);
         fakeFtpServer.setServerControlPort(0);
 
@@ -112,6 +117,7 @@ public class RemoteFileManagerTest {
         }
     }
 
+    @Test
     public void removeFileNotInFilesystem()
     {
         assertFalse(remoteFileManager.removeFile("/remove/pizza_party.txt"));
@@ -121,6 +127,72 @@ public class RemoteFileManagerTest {
     public void removeFileInFilesystem()
     {
         assertTrue(remoteFileManager.removeFile("/remove/potato.txt"));
+    }
+
+    @Test
+    public void removeEmptyDir(){
+        assertTrue(remoteFileManager.removeDirectory("/empty"));
+        assertFalse(remoteFileManager.removeDirectory("/empty"));
+    }
+
+    @Test
+    public void removeNonEmptyDir(){
+        assertFalse(remoteFileManager.removeDirectory("/remove"));
+    }
+
+    @Test
+    public void removeBadPathDir(){
+        assertFalse(remoteFileManager.removeDirectory("badpath"));
+    }
+
+    @Test
+    public void removeDirLeavesFilesAlone(){
+        try {
+            ftp.changeWorkingDirectory("/remove/");
+            FTPFile[] ftpFiles = ftp.listFiles();
+            assertTrue(Arrays.stream(ftpFiles).anyMatch(f -> f.getName().equals("potato.txt")));
+            assertFalse(remoteFileManager.removeDirectory("/remove/potato.txt"));
+            assertTrue(Arrays.stream(ftpFiles).anyMatch(f -> f.getName().equals("potato.txt")));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    public void removeRecursiveRemovesDeep(){
+        try {
+            ftp.changeToParentDirectory();
+            FTPFile[] ftpFiles = ftp.listFiles();
+            assertEquals(1, Arrays.stream(ftpFiles).filter(f -> f.getName().contains("deep")).count());
+            assertTrue(remoteFileManager.removeDirectoryRecursive("/deep"));
+            ftpFiles = ftp.listFiles();
+            assertEquals(0, Arrays.stream(ftpFiles).filter(f -> f.getName().contains("deep")).count());
+        } catch (IOException e){
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    public void removeRecursiveOnlyRemovesOne(){
+        try {
+            ftp.changeToParentDirectory();
+            FTPFile[] ftpFiles = ftp.listFiles();
+            int size = ftpFiles.length;
+            assertTrue(remoteFileManager.removeDirectoryRecursive("/deep"));
+            assertEquals(size-1, ftp.listFiles().length);
+        } catch (IOException e){
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    public void removeRecursiveFailsInvalidPath(){
+        assertFalse(remoteFileManager.removeDirectoryRecursive("/donotexist"));
+    }
+
+    @Test
+    public void removeRecursiveFailsOnFile(){
+        assertFalse(remoteFileManager.removeDirectoryRecursive("/remove/potato.txt"));
     }
 
     @Test
