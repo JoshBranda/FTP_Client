@@ -4,6 +4,7 @@ import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -128,7 +129,43 @@ public class RemoteFileManager {
 
     }
 
+    public List<String> downloadMultipleFiles(String sourceFolder, List<String> fileNames, String destFolder) {
+
+        List<String> failedTransfers = new ArrayList<>();
+
+        boolean result = true;
+
+        if (fileNames == null || fileNames.size() == 0) {
+            failedTransfers.add("No files specified");
+            return failedTransfers;
+        }
+
+        if (sourceFolder == null) {
+            failedTransfers.add("Invalid source folder");
+            return failedTransfers;
+        }
+
+        if (destFolder == null) {
+            failedTransfers.add("Invalid destination folder");
+            return failedTransfers;
+        }
+
+        for (String fileName : fileNames) {
+            if (!downloadFile(sourceFolder + fileName, destFolder + fileName)) {
+                failedTransfers.add(fileName);
+            }
+        }
+
+        if (failedTransfers.size() == 0) {
+            return null;
+        }
+
+        return failedTransfers;
+    }
+
     public boolean uploadMultipleFiles (List<File> filesToUpload, String destFolder) {
+
+
         boolean result = true;
 
         if (filesToUpload == null || filesToUpload.size() == 0) {
