@@ -3,10 +3,8 @@ package client;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.io.*;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -151,6 +149,80 @@ public class RemoteFileManager {
         return false;
 
     }
+    public boolean downloadFile(String sourcePath, String destPath)
+    {
+        File downloadedFile = new File(destPath);
+        try
+        {
+            OutputStream outputStream = new BufferedOutputStream(new FileOutputStream(downloadedFile));
+            boolean success = ftp.retrieveFile(sourcePath, outputStream);
+            if(!success)
+            {
+                downloadedFile.delete();
+            }
+            outputStream.close();
+            return success;
+        }
+        catch (IOException ex)
+        {
+            downloadedFile.delete();
+            return false;
+        }
 
+    }
+
+    public List<String> downloadMultipleFiles(String sourceFolder, List<String> fileNames, String destFolder) {
+
+        List<String> failedTransfers = new ArrayList<>();
+
+        boolean result = true;
+
+        if (fileNames == null || fileNames.size() == 0) {
+            failedTransfers.add("No files specified");
+            return failedTransfers;
+        }
+
+        if (sourceFolder == null) {
+            failedTransfers.add("Invalid source folder");
+            return failedTransfers;
+        }
+
+        if (destFolder == null) {
+            failedTransfers.add("Invalid destination folder");
+            return failedTransfers;
+        }
+
+        for (String fileName : fileNames) {
+            if (!downloadFile(sourceFolder + fileName, destFolder + fileName)) {
+                failedTransfers.add(fileName);
+            }
+        }
+
+        if (failedTransfers.size() == 0) {
+            return null;
+        }
+
+        return failedTransfers;
+    }
+
+    public boolean uploadMultipleFiles (List<File> filesToUpload, String destFolder) {
+
+
+        boolean result = true;
+
+        if (filesToUpload == null || filesToUpload.size() == 0) {
+            return false;
+        }
+
+        for (File file : filesToUpload) {
+
+            if (uploadFile(file, destFolder + file.getName()) == false) {
+                result = false;
+            }
+        }
+
+        return result;
+    }
 }
+
 
