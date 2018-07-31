@@ -89,11 +89,7 @@ public class RemoteFileManager {
     //Fails on nonempty directories
     public boolean removeDirectory(String pathname) {
         try {
-            FTPFile[] before = ftp.listDirectories();
-            boolean holder = ftp.removeDirectory(pathname);
-            FTPFile[] after = ftp.listDirectories();
-            return holder;
-            //return ftp.removeDirectory(pathname);
+            return ftp.removeDirectory(pathname);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -101,23 +97,20 @@ public class RemoteFileManager {
     }
 
     //A false here likely means that the expected files were modified by another ftp session
-    public boolean removeDirectoryRecursive(String pathname){
+    public boolean removeDirectoryRecursive(String pathname) {
         try {
-           FTPFile[] files = ftp.listFiles(pathname);
-           boolean result;
-           for ( FTPFile f : files) {
-               if (f.isDirectory()) {
-                   result = removeDirectoryRecursive(pathname + "/" + f.getName());
-                   if (result == false) {
-                       return false;
-                   }
-               } else {
-                   result = removeFile(pathname + "/" + f.getName());
-                   if (result == false) {
-                       return false;
-                   }
-               }
-           }
+            FTPFile[] files = ftp.listFiles(pathname);
+            for (FTPFile f : files) {
+                if (f.isDirectory()) {
+                    if (!removeDirectoryRecursive(pathname + "/" + f.getName())) {
+                        return false;
+                    }
+                } else {
+                    if (!removeFile(pathname + "/" + f.getName())) {
+                        return false;
+                    }
+                }
+            }
             //Everything should be gone, delete parent
             return removeDirectory(pathname);
         } catch (IOException e) {
