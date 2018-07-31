@@ -48,6 +48,7 @@ public class RemoteFileManagerTest {
         fileSystem.add(new DirectoryEntry("/data"));
         fileSystem.add(new DirectoryEntry("/data/foobar"));
         fileSystem.add(new FileEntry("/data/foobar.txt", "abcdef 1234567890"));
+        fileSystem.add(new FileEntry("/data/chomsky.txt", "abcdef 1234567890"));
         //Directory & file created to test remove functions
         fileSystem.add(new DirectoryEntry("/remove"));
         fileSystem.add(new FileEntry("/remove/potato.txt", "abcdef 1234567890"));
@@ -73,7 +74,8 @@ public class RemoteFileManagerTest {
     public void listRemoteFiles()
     {
         remoteFileManager.displayFiles();
-        assertEquals("foobar.txt", outContent.toString().trim());
+        assertTrue(outContent.toString().contains("foobar.txt"));
+        assertTrue(outContent.toString().contains("chomsky.txt"));
     }
 
     @Test
@@ -254,6 +256,76 @@ public class RemoteFileManagerTest {
         String destPath = "src/test/resources/foobar.txt";
         String sourcePath = "invalid.txt";
         assertFalse(remoteFileManager.downloadFile(sourcePath, destPath));
+    }
+
+    @Test
+    public void downloadFilesFromRemoteServer()
+    {
+        List<String> files = new ArrayList<>();
+        String destFolder = "src/test/resources/";
+        String sourceFolder = "";
+        String fileName1 = "foobar.txt";
+        String fileName2 = "chomsky.txt";
+        files.add(fileName1);
+        files.add(fileName2);
+
+        List<String> result = remoteFileManager.downloadMultipleFiles(sourceFolder, files ,destFolder);
+        assertEquals(result, null);
+        new File(destFolder + fileName1).delete();
+        new File(destFolder + fileName2).delete();
+    }
+
+    @Test
+    public void downloadFilesFromRemoteServerNullList()
+    {
+        List<String> files = null;
+        String destFolder = "src/test/resources/";
+        String sourceFolder = "";
+
+        List<String> result = remoteFileManager.downloadMultipleFiles(sourceFolder, files ,destFolder);
+        assertTrue(result.get(0).equals("No files specified"));
+    }
+
+    @Test
+    public void downloadFilesFromRemoteServerEmptyList()
+    {
+        List<String> files = new ArrayList<>();
+        String destFolder = "src/test/resources/";
+        String sourceFolder = "";
+
+        List<String> result = remoteFileManager.downloadMultipleFiles(sourceFolder, files ,destFolder);
+        assertTrue(result.get(0).equals("No files specified"));
+    }
+
+    @Test
+    public void downloadFilesFromRemoteServerNullFolder()
+    {
+        List<String> files = new ArrayList<>();
+        String destFolder = "src/test/resources/";
+        String sourceFolder = null;
+        String fileName1 = "foobar.txt";
+        String fileName2 = "chomsky.txt";
+        files.add(fileName1);
+        files.add(fileName2);
+
+        List<String> result = remoteFileManager.downloadMultipleFiles(sourceFolder, files ,destFolder);
+        assertTrue(result.get(0).equals("Invalid source folder"));
+    }
+
+    @Test
+    public void downloadFilesFromRemoteServerOneIsInvalid()
+    {
+        List<String> files = new ArrayList<>();
+        String destFolder = "src/test/resources/";
+        String sourceFolder = "";
+        String fileName1 = "foobar.txt";
+        String fileName2 = "pizzaParty.txt";
+        files.add(fileName1);
+        files.add(fileName2);
+
+        List<String> result = remoteFileManager.downloadMultipleFiles(sourceFolder, files ,destFolder);
+        assertTrue(result.get(0).equals("pizzaParty.txt"));
+        new File(destFolder + fileName1).delete();
     }
 
     @AfterEach

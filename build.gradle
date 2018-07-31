@@ -27,6 +27,9 @@ dependencies {
     )
     compile group: 'commons-net', name: 'commons-net', version:'3.6'
 
+	// https://mvnrepository.com/artifact/org.yaml/snakeyaml
+	compile group: 'org.yaml', name: 'snakeyaml', version: '1.8'
+
     // https://mvnrepository.com/artifact/org.mockftpserver/MockFtpServer
     testCompile group: 'org.mockftpserver', name: 'MockFtpServer', version: '2.7.1'
 
