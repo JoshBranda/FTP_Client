@@ -6,7 +6,6 @@
 package client;
 
 import java.util.Scanner; // For User input.
-import org.apache.commons.net.ftp.FTPClient;
 
 public class LoginPrompts {
     // Private data members (username, password, and server name)
@@ -15,6 +14,14 @@ public class LoginPrompts {
     private String serverName;
 
     // Basic constructor.
+    public LoginPrompts() {
+        this.username = null;
+        this.password = null;
+        this.serverName = null;
+    }
+
+
+    // Basic constructor with arguments.
     public LoginPrompts(String username, String password, String serverName) {
         this.username = username;
         this.password = password;
@@ -24,7 +31,11 @@ public class LoginPrompts {
     // This function prompts the user for a username, a password, and a server name.
     public void getCreds() {
         Scanner input = new Scanner(System.in);
-        FTPClient ftp;
+
+        System.out.println("Enter a server name:");
+        serverName = input.next();
+        input.nextLine();
+
         System.out.println("Enter a username:");
         username = input.next();
         input.nextLine();
@@ -33,12 +44,5 @@ public class LoginPrompts {
         password = input.next();
         input.nextLine();
 
-        System.out.println("Enter a server name:");
-        serverName = input.next();
-        input.nextLine();
-
-        //if(ftp.login(username, password)) {
-
-        //}
     }
 }
