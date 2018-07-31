@@ -150,6 +150,22 @@ public class ConnectionTest {
         assertEquals(501,reply); // FTP error code: syntax error for parameters   
     }
 
+    @Test
+    public void logout(){
+        Connection conn = new client.Connection();
+        conn.connect("localhost", fakeFtpServer.getServerControlPort());
+        FTPSClient ftp = conn.getConnection();
+        int reply;
+
+        conn.login("user", "password");
+        reply = ftp.getReplyCode();
+
+        assertEquals(230,reply); // FTP status code: user logged in
+
+        assertTrue(conn.logout());
+
+    }
+
     @AfterEach
     public void tearDown() {
     	fakeFtpServer.stop();

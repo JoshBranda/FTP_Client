@@ -228,6 +228,22 @@ public class FtpConnectionTest {
 		}
     }
 
+    @Test
+    public void logout(){
+        FtpConnection conn = new client.FtpConnection();
+        conn.connect("localhost", fakeFtpServer.getServerControlPort());
+        FTPClient ftp = conn.getConnection();
+        int reply;
+
+        conn.login("user", "password");
+        reply = ftp.getReplyCode();
+
+        assertEquals(230,reply); // FTP status code: user logged in
+
+        assertTrue(conn.logout());
+
+    }
+
     @AfterEach
     public void tearDown() {
     	fakeFtpServer.stop();
