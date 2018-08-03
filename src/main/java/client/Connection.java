@@ -66,4 +66,17 @@ public class Connection {
 			return false;
 		}
 	}
+
+	public boolean logout(){
+		this.username ="";
+		this.password="";
+
+		try {
+			return this.ftp.logout();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		return false;
+	}
 }
