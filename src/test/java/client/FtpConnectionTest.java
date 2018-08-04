@@ -95,6 +95,54 @@ public class FtpConnectionTest {
     }
     
     @Test
+    public void loginSaved() {
+    	String test_config_file = "src/test/resources/testFolder/client_config.yaml";
+    	FtpConnection conn = new client.FtpConnection(test_config_file);
+    	int reply;
+    	
+    	// Test use saved connection login as anonymous user
+    	conn.saveConnection("test1", "localhost:"+fakeFtpServer.getServerControlPort());
+    	try {
+			assertFalse(conn.loginSaved("test1"));
+			assertTrue(conn.isConnected());
+			reply = conn.getConnection().getReplyCode();
+	        
+	        assertEquals(530,reply); // FTP status code: user logged in as anonymous
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	assertTrue(conn.saveConnection("test1", "fakehost1:1"));
+    	
+    	// Test use saved connection login as user
+    	conn.saveConnection("test2", "localhost:"+fakeFtpServer.getServerControlPort()+":user:password");
+    	try {
+			assertTrue(conn.loginSaved("test2"));
+			assertTrue(conn.isConnected());
+			reply = conn.getConnection().getReplyCode();
+	        
+	        assertEquals(230,reply); // FTP status code: user logged in
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+    	// Test no saved connection found exception
+    	try {
+    		conn.disconnect();
+			assertFalse(conn.loginSaved("test3"));
+			assertEquals(outContent.toString(),"Connection test3 doesn't exist...\n");
+			assertFalse(conn.isConnected());
+			reply = conn.getConnection().getReplyCode();
+	        
+	        assertEquals(530,reply); // FTP status code: user logged in
+		} catch (IOException e) {
+			assertEquals(e.getMessage(),"Connection info not found");
+		}
+    }
+    
+    
+    @Test
     public void login() {
     	FtpConnection conn = new client.FtpConnection();
     	conn.connect("localhost", fakeFtpServer.getServerControlPort());
@@ -140,7 +188,7 @@ public class FtpConnectionTest {
         ftp = conn.getConnection();
         reply = ftp.getReplyCode();
         
-        assertEquals(501,reply); // FTP error code: syntax error for parameters   
+        assertEquals(501,reply); // FTP error code: syntax error for parameters  
     }
     
     @Test

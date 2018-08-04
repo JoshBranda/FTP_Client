@@ -84,6 +84,36 @@ public class FtpConnection {
 			return false;
 		}
 	}
+	
+	public boolean loginSaved(String connection_name) throws IOException {
+		Map<String, Object> connection_entries;
+		Yaml yaml = new Yaml();
+		File config_file = new File(this.config_file);
+
+		if (config_file.exists()) {
+			InputStream config;
+			try {
+				config = new FileInputStream(this.config_file);
+			} catch (FileNotFoundException e) {
+				throw new RuntimeException(e);
+			}
+			connection_entries = (Map<String, Object>) yaml.load(config);
+		} else {
+			throw new IOException("Connection info not found");
+		}
+		Map<String, Object> connection_info = (Map<String, Object>) connection_entries.get(connection_name);
+		if (connection_info == null) {
+			System.out.println(String.format("Connection %s doesn't exist...", connection_name));
+			return false;
+		}
+		String host = (String) connection_info.get("host");
+		int port = (int) connection_info.get("port");
+		String username = (String) connection_info.getOrDefault("username", "anonymous");
+		String password = (String) connection_info.getOrDefault("password", "anonymous");
+		
+		this.connect(host, port);
+		return this.login(username, password);
+	}
 
 	public String getInfo() {
 		// Return connection info as a string
