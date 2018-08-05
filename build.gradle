@@ -1,3 +1,4 @@
+apply plugin: 'idea'
 apply plugin: 'java'
 apply plugin: 'maven'
 apply plugin: 'application'
@@ -34,6 +35,10 @@ dependencies {
     testCompile group: 'org.mockftpserver', name: 'MockFtpServer', version: '2.7.1'
 
 
+}
+
+run {
+    standardInput = System.in
 }
 
 test {
