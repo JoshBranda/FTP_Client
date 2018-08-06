@@ -221,9 +221,6 @@ public class FtpConnectionTest {
 			String config_str = new String(config_content);
 
 			assertEquals(expected_str, config_str);
-
-			// cleanup after comparison is done
-			//Files.delete(file_path);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -260,9 +257,6 @@ public class FtpConnectionTest {
 			String config_str = new String(config_content);
 
 			assertEquals(expected_str, config_str);
-
-			// cleanup after comparison is done
-			//Files.delete(file_path);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
