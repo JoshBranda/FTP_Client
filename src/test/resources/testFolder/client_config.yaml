@@ -1,0 +1,9 @@
+test1:
+  port: 1
+  host: fakehost1
+test2:
+  port: 2
+  host: fakehost2
+test3:
+  port: 3
+  host: fakehost3
