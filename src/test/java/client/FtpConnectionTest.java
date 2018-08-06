@@ -110,26 +110,6 @@ public class FtpConnectionTest {
         assertEquals(530,reply); // FTP status code: user logged in as anonymous
 		conn.disconnect();
 		conn.logout();
-
-    	// Test use saved connection login as user
-    	conn.saveConnection("test2", "localhost:"+fakeFtpServer.getServerControlPort()+":user:password");
-		assertTrue(conn.loginSaved("test2"));
-		assertTrue(conn.isConnected());
-		reply = conn.getConnection().getReplyCode();
-
-        assertEquals(230,reply); // FTP status code: user logged in
-		conn.disconnect();
-		conn.logout();
-		
-    	// Test no saved connection found exception
-    	try {
-			assertFalse(conn.loginSaved("test3"));
-			assertEquals(outContent.toString(),"Connection test3 doesn't exist...\n");
-			assertFalse(conn.isConnected());
-		} catch (IOException e) {
-			
-			assertEquals(e.getMessage(),"Connection info not found");
-		}
     }
 
     @Test
@@ -146,18 +126,17 @@ public class FtpConnectionTest {
         assertEquals(230,reply); // FTP status code: user logged in
 		conn.disconnect();
 		conn.logout();
-
-    	// Test no saved connection found exception
-    	try {
-			assertFalse(conn.loginSaved("test3"));
-			assertEquals(outContent.toString(),"Connection test3 doesn't exist...\n");
-			assertFalse(conn.isConnected());
-		} catch (IOException e) {
-			assertEquals(e.getMessage(),"Connection info not found");
-		}
     }
-    
-    
+
+    @Test
+    public void loginSavedInvalidUser() throws IOException {
+    	FtpConnection conn = new client.FtpConnection(this.test_config_file);
+    	// Test no saved connection found exception
+		conn.saveConnection("test", "localhost:"+fakeFtpServer.getServerControlPort()+":user:password");
+		assertFalse(conn.loginSaved("test3"));
+		assertEquals("Connection test3 doesn't exist...\n",outContent.toString());
+		assertFalse(conn.isConnected());
+    }
     @Test
     public void login() {
     	FtpConnection conn = new client.FtpConnection();
@@ -241,7 +220,7 @@ public class FtpConnectionTest {
 			byte[] config_content = Files.readAllBytes(file_path);
 			String config_str = new String(config_content);
 
-			assertEquals(config_str, expected_str);
+			assertEquals(expected_str, config_str);
 
 			// cleanup after comparison is done
 			//Files.delete(file_path);
@@ -280,7 +259,7 @@ public class FtpConnectionTest {
 			byte[] config_content = Files.readAllBytes(file_path);
 			String config_str = new String(config_content);
 
-			assertEquals(config_str, expected_str);
+			assertEquals(expected_str, config_str);
 
 			// cleanup after comparison is done
 			//Files.delete(file_path);
@@ -319,6 +298,7 @@ public class FtpConnectionTest {
 				e.printStackTrace();
 			}
     	}
+        outContent.reset();
         System.setOut(originalOut);
         System.setErr(originalErr);
     }

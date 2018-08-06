@@ -99,7 +99,7 @@ public class FtpConnection {
 			}
 			connection_entries = (Map<String, Object>) yaml.load(config);
 		} else {
-			throw new IOException("Connection info not found");
+			throw new IOException("Connection info not found\n");
 		}
 		Map<String, Object> connection_info = (Map<String, Object>) connection_entries.get(connection_name);
 		if (connection_info == null) {
