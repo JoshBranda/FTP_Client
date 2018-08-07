@@ -54,13 +54,13 @@ public class FileManagerTest {
     }
 
     @Test
-    public boolean renameFileLS() {
+    public void renameFileLS() {
         String original = "sample.txt";
-        String renamed = "sample2.txt";
+        String test = "test.txt";
 
-        fileManager.renameFileLS(original, renamed);
+        fileManager.renameFileLS(original, test);
 
-        return true;
+        assertEquals("Success!", "Success!");
 
     }
 
