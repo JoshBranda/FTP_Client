@@ -53,4 +53,15 @@ public class FileManagerTest {
         assertEquals("Directory contents: folder sample.txt ", outContent.toString());
     }
 
+    @Test
+    public boolean renameFileLS() {
+        String original = "sample.txt";
+        String renamed = "sample2.txt";
+
+        fileManager.renameFileLS(original, renamed);
+
+        return true;
+
+    }
+
 }
