@@ -40,12 +40,10 @@ public class FileManager {
                 File old = new File(files[i].getName());
                 File renamed = new File(newName);
                 old.renameTo(renamed);
-                System.out.print("Success! File " + toRename + " renamed to " + newName + "!");
                 return true;
             }
         }
 
-        System.out.println("Error: Could not rename file.");
         return false;
 
     }
