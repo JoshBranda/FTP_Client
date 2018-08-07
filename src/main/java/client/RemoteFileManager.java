@@ -84,6 +84,41 @@ public class RemoteFileManager {
         return false;
     }
 
+    //Safe, non recursive remove directory
+    //Returns true if successful, otherwise false
+    //Fails on nonempty directories
+    public boolean removeDirectory(String pathname) {
+        try {
+            return ftp.removeDirectory(pathname);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    //A false here likely means that the expected files were modified by another ftp session
+    public boolean removeDirectoryRecursive(String pathname) {
+        try {
+            FTPFile[] files = ftp.listFiles(pathname);
+            for (FTPFile f : files) {
+                if (f.isDirectory()) {
+                    if (!removeDirectoryRecursive(pathname + "/" + f.getName())) {
+                        return false;
+                    }
+                } else {
+                    if (!removeFile(pathname + "/" + f.getName())) {
+                        return false;
+                    }
+                }
+            }
+            //Everything should be gone, delete parent
+            return removeDirectory(pathname);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
 
     public boolean uploadFile(File fileToUpload, String destPath){
         try
