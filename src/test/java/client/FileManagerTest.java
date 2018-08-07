@@ -57,10 +57,11 @@ public class FileManagerTest {
     public void renameFileLS() {
         String original = "sample.txt";
         String test = "test.txt";
+        boolean result;
 
-        fileManager.renameFileLS(original, test);
+        result = fileManager.renameFileLS(original, test);
 
-        assertEquals("Success!", "Success!");
+        assertEquals(true, result);
 
     }
 
