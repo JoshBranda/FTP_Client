@@ -1,7 +1,6 @@
 package client;
 
 import java.io.File;
-import java.util.Scanner;
 
 public class FileManager {
 
@@ -27,36 +26,27 @@ public class FileManager {
     }
 
     // Rename a file on a local server.
+    // Return true if successful.
     public boolean renameFileLS(String toRename, String newName) {
-        Scanner input = new Scanner(System.in);
         File folder = new File(localPath);
 
-        // Get the name of the original file from the user.
-        System.out.println("Please enter the name of the file you wish to rename:");
-        toRename = input.next();
-        input.nextLine();
-
-        // Check if the file exists.
+        // Get a list of files.
         File [] files = folder.listFiles();
-        for(int i = 0; i < files.length; i++) {
-            if (!(files[i].getName().equals(toRename))) {
-                System.out.println("Error: There is no such file called " + toRename);
-                break;
-            }
-            else {
-                // Get the new file name from the user.
-                System.out.println("Please enter a new name for the file:");
-                newName = input.next();
-                input.nextLine();
 
+        // Search all files in the local path.
+        // If a file with the name is detected, it will rename it.
+        for (int i = 0; i < files.length; i++) {
+            if ((files[i].getName().equals(toRename))) {
+                File old = new File(files[i].getName());
                 File renamed = new File(newName);
-
-                files[i].renameTo(renamed);
-
+                old.renameTo(renamed);
+                System.out.print("Success! File " + toRename + " renamed to " + newName + "!");
                 return true;
             }
         }
 
+        System.out.println("Error: Could not rename file.");
         return false;
+
     }
 }
