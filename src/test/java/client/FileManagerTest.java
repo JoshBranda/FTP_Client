@@ -59,7 +59,7 @@ public class FileManagerTest {
         String original = "sample.txt";
         String test = "pizza.txt";
 
-        fileManager.setLocalPath("src/main/resources");
+        fileManager.setLocalPath("src/main/resources/");
         fileManager.renameFileLS(original, test);
 
         assertEquals("File " + original + " renamed to " + test + "!", outContent.toString());
