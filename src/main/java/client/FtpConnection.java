@@ -98,6 +98,7 @@ public class FtpConnection {
 				throw new RuntimeException(e);
 			}
 			connection_entries = (Map<String, Object>) yaml.load(config);
+			config.close();
 		} else {
 			throw new IOException("Connection info not found\n");
 		}
@@ -169,6 +170,12 @@ public class FtpConnection {
 			throw new RuntimeException(e);
 		}
 		yaml.dump(connection_entries, config_writer);
+		try {
+			config_writer.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 		return true;
 	}
