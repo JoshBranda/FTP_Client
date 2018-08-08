@@ -16,12 +16,12 @@ public class FileManager {
     public void displayLocal() {
         File folder = new File(localPath);
 
-        System.out.print("Directory contents: ");
+        System.out.println("Directory contents: ");
 
         File[] files = folder.listFiles();
 
         for (int i = 0; i < files.length; i++) {
-            System.out.print(files[i].getName() + " ");
+            System.out.println(files[i].getName() + " ");
         }
     }
 }

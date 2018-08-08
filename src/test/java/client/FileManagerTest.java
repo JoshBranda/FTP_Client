@@ -12,6 +12,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class FileManagerTest {
 
@@ -50,7 +51,9 @@ public class FileManagerTest {
     public void displayLocal() {
         fileManager.displayLocal();
 
-        assertEquals("Directory contents: folder sample.txt ", outContent.toString());
+        assertTrue(outContent.toString().contains("folder"));
+        assertTrue(outContent.toString().contains("sample.txt"));
+
     }
 
 }
