@@ -5,6 +5,7 @@
 package client;
 
 import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -57,12 +58,16 @@ public class FileManagerTest {
     public void renameFileLS() {
         String original = "sample.txt";
         String test = "test.txt";
-        boolean result;
 
-        result = fileManager.renameFileLS(original, test);
+        fileManager.renameFileLS(original, test);
 
-        assertEquals(true, result);
+        assertEquals("File " + original + "renamed to " + test + "!", outContent.toString());
+
 
     }
 
+    @AfterEach
+    public void teardown() {
+        outContent.reset();
+    }
 }
