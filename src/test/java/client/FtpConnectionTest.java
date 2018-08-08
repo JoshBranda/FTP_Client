@@ -207,6 +207,15 @@ public class FtpConnectionTest {
     
     @Test
     public void saveConnection() {
+    	Path file_path = Paths.get(this.test_config_file);
+    	if (Files.exists(file_path)) {
+	    	try {
+				Files.delete(file_path);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+    	}
     	FtpConnection conn = new client.FtpConnection(this.test_config_file);
 
     	assertTrue(conn.saveConnection("test1", "fakehost1:1"));
@@ -225,7 +234,7 @@ public class FtpConnectionTest {
 				"  port: 3\n" + 
 				"  host: fakehost3\n";
     	try {
-			Path file_path = Paths.get(this.test_config_file);
+			file_path = Paths.get(this.test_config_file);
 			byte[] config_content = Files.readAllBytes(file_path);
 			String config_str = new String(config_content);
 
@@ -238,6 +247,15 @@ public class FtpConnectionTest {
     
     @Test
     public void saveConnectionWithLogin() {
+    	Path file_path = Paths.get(this.test_config_file);
+    	if (Files.exists(file_path)) {
+	    	try {
+				Files.delete(file_path);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+    	}
     	FtpConnection conn = new client.FtpConnection(this.test_config_file);
 
     	assertTrue(conn.saveConnection("test1", "fakehost1:1:fakeuser1:pass1"));
@@ -261,7 +279,7 @@ public class FtpConnectionTest {
 				"  host: fakehost3\n" + 
 				"  username: fakeuser3\n";
     	try {
-			Path file_path = Paths.get(test_config_file);
+			file_path = Paths.get(test_config_file);
 			byte[] config_content = Files.readAllBytes(file_path);
 			String config_str = new String(config_content);
 

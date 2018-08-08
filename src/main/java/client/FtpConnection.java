@@ -22,7 +22,7 @@ public class FtpConnection {
 
 	public FtpConnection() {
 		this.ftp = new FTPClient();
-		this.config_file = "src/main/client_config.yaml";
+		this.config_file = "src/main/client_config.yaml".replace("/",File.separator);
 		this.username = "anonymous";
 		this.password = "anonymous";
 	}
