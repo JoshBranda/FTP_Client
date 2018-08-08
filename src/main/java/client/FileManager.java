@@ -29,21 +29,23 @@ public class FileManager {
     // Return true if successful.
     public boolean renameFileLS(String toRename, String newName) {
         File folder = new File(localPath);
-
+        boolean isRenamed;
         // Get a list of files.
         File [] files = folder.listFiles();
 
         // Search all files in the local path.
         // If a file with the name is detected, it will rename it.
         for (int i = 0; i < files.length; i++) {
-            if ((files[i].getName().equals(toRename))) {
-                File old = new File(files[i].getName());
+            if (files[i].isFile() && (files[i].getName().equals(toRename))) {
+                //File old = new File(files[i].getName());
                 File renamed = new File(newName);
-                old.renameTo(renamed);
-                return true;
+                isRenamed = files[i].renameTo(renamed);
+                System.out.print("File " + toRename + "renamed to " + newName + "!");
+                return isRenamed;
             }
         }
 
+        System.out.print("Not renamed");
         return false;
 
     }
