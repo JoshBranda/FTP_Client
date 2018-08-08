@@ -10,5 +10,7 @@ public class Client {
 
 		login.getCreds();
 
+		Connection connection = new Connection();
+		connection.connect(login.getServerName());
 	}
 }

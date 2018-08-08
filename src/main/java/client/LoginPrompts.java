@@ -45,4 +45,16 @@ public class LoginPrompts {
         input.nextLine();
 
     }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public String getServerName() {
+        return serverName;
+    }
 }
