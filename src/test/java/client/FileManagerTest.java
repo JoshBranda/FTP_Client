@@ -57,11 +57,12 @@ public class FileManagerTest {
     @Test
     public void renameFileLS() {
         String original = "sample.txt";
-        String test = "test.txt";
+        String test = "pizza.txt";
 
+        fileManager.setLocalPath("src/main/resources");
         fileManager.renameFileLS(original, test);
 
-        assertEquals("File " + original + "renamed to " + test + "!", outContent.toString());
+        assertEquals("File " + original + " renamed to " + test + "!", outContent.toString());
 
 
     }

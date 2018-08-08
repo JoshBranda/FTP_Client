@@ -37,15 +37,14 @@ public class FileManager {
         // If a file with the name is detected, it will rename it.
         for (int i = 0; i < files.length; i++) {
             if (files[i].isFile() && (files[i].getName().equals(toRename))) {
-                //File old = new File(files[i].getName());
                 File renamed = new File(newName);
                 isRenamed = files[i].renameTo(renamed);
-                System.out.print("File " + toRename + "renamed to " + newName + "!");
+                System.out.print("File " + toRename + " renamed to " + newName + "!");
                 return isRenamed;
             }
         }
 
-        System.out.print("Not renamed");
+        System.out.print("ERROR: File Not renamed!");
         return false;
 
     }
