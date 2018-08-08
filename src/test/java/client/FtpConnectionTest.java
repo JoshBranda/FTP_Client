@@ -27,8 +27,8 @@ public class FtpConnectionTest {
     private static final PrintStream originalOut = System.out;
     private static final PrintStream originalErr = System.err;
     
-    private String test_config_file = "src/test/resources/testFolder/client_config.yaml";
-    
+    private String test_config_file = "src/test/resources/testFolder/client_config.yaml".replace("/",File.separator);
+
     @BeforeEach
     public void setup() {
         System.setOut(new PrintStream(outContent));
@@ -134,7 +134,16 @@ public class FtpConnectionTest {
     	// Test no saved connection found exception
 		conn.saveConnection("test", "localhost:"+fakeFtpServer.getServerControlPort()+":user:password");
 		assertFalse(conn.loginSaved("test3"));
-		assertEquals("Connection test3 doesn't exist...\n",outContent.toString());
+		
+		// https://stackoverflow.com/questions/41674408/java-test-system-output-including-new-lines-with-assertequals
+		// use printWriter to build expected string
+		StringWriter expectedStringWriter = new StringWriter();
+		PrintWriter printWriter = new PrintWriter(expectedStringWriter);
+		printWriter.println("Connection test3 doesn't exist...");
+		String expected = expectedStringWriter.toString();
+		printWriter.close();
+
+		assertEquals(expected, outContent.toString());
 		assertFalse(conn.isConnected());
     }
     @Test
