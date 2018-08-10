@@ -217,6 +217,8 @@ public class RemoteFileManager {
         return result;
     }
 
+    //Used site as model:
+    //http://www.codejava.net/java-se/networking/ftp/determine-if-a-directory-or-file-exists-on-ftp-server
     public boolean setPermissionRemote (String newPermission, String fileName) {
 
         try {
