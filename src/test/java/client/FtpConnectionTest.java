@@ -27,6 +27,8 @@ public class FtpConnectionTest {
     private static final PrintStream originalOut = System.out;
     private static final PrintStream originalErr = System.err;
     
+    private String test_config_file = "src/test/resources/testFolder/client_config.yaml".replace("/",File.separator);
+
     @BeforeEach
     public void setup() {
         System.setOut(new PrintStream(outContent));
@@ -93,7 +95,7 @@ public class FtpConnectionTest {
         
     	assertTrue(conn.isConnected());
     }
-    
+
     @Test
     public void login() {
     	FtpConnection conn = new client.FtpConnection();
@@ -140,7 +142,7 @@ public class FtpConnectionTest {
         ftp = conn.getConnection();
         reply = ftp.getReplyCode();
         
-        assertEquals(501,reply); // FTP error code: syntax error for parameters   
+        assertEquals(501,reply); // FTP error code: syntax error for parameters  
     }
     
     @Test
@@ -155,8 +157,7 @@ public class FtpConnectionTest {
     
     @Test
     public void saveConnection() {
-    	String test_config_file = "src/test/resources/testFolder/client_config.yaml";
-    	FtpConnection conn = new client.FtpConnection(test_config_file);
+    	FtpConnection conn = new client.FtpConnection(this.test_config_file);
 
     	assertTrue(conn.saveConnection("test1", "fakehost1:1"));
     	assertTrue(conn.saveConnection("test2", "fakehost2:2"));
@@ -174,14 +175,11 @@ public class FtpConnectionTest {
 				"  port: 3\n" + 
 				"  host: fakehost3\n";
     	try {
-			Path file_path = Paths.get(test_config_file);
+			Path file_path = Paths.get(this.test_config_file);
 			byte[] config_content = Files.readAllBytes(file_path);
 			String config_str = new String(config_content);
 
-			assertEquals(config_str, expected_str);
-
-			// cleanup after comparison is done
-			Files.delete(file_path);
+			assertEquals(expected_str, config_str);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -190,8 +188,7 @@ public class FtpConnectionTest {
     
     @Test
     public void saveConnectionWithLogin() {
-    	String test_config_file = "src/test/resources/testFolder/client_config.yaml";
-    	FtpConnection conn = new client.FtpConnection(test_config_file);
+    	FtpConnection conn = new client.FtpConnection(this.test_config_file);
 
     	assertTrue(conn.saveConnection("test1", "fakehost1:1:fakeuser1:pass1"));
     	assertTrue(conn.saveConnection("test2", "fakehost2:2:fakeuser2"));
@@ -218,10 +215,7 @@ public class FtpConnectionTest {
 			byte[] config_content = Files.readAllBytes(file_path);
 			String config_str = new String(config_content);
 
-			assertEquals(config_str, expected_str);
-
-			// cleanup after comparison is done
-			Files.delete(file_path);
+			assertEquals(expected_str, config_str);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -244,9 +238,71 @@ public class FtpConnectionTest {
 
     }
 
+    @Test
+    public void loginSavedAnonymous() throws IOException {
+    	FtpConnection conn = new client.FtpConnection(this.test_config_file);
+    	int reply;
+
+    	// Test use saved connection login as anonymous user
+    	conn.saveConnection("test1", "localhost:"+fakeFtpServer.getServerControlPort());
+		assertFalse(conn.loginSaved("test1"));
+		assertTrue(conn.isConnected());
+		reply = conn.getConnection().getReplyCode();
+
+        assertEquals(530,reply); // FTP status code: user logged in as anonymous
+		conn.disconnect();
+		conn.logout();
+    }
+
+    @Test
+    public void loginSavedValidUser() throws IOException {
+    	FtpConnection conn = new client.FtpConnection(this.test_config_file);
+    	int reply;
+
+    	// Test use saved connection login as user
+    	conn.saveConnection("test2", "localhost:"+fakeFtpServer.getServerControlPort()+":user:password");
+		assertTrue(conn.loginSaved("test2"));
+		assertTrue(conn.isConnected());
+		reply = conn.getConnection().getReplyCode();
+
+        assertEquals(230,reply); // FTP status code: user logged in
+		conn.disconnect();
+		conn.logout();
+    }
+
+    @Test
+    public void loginSavedInvalidUser() throws IOException {
+    	FtpConnection conn = new client.FtpConnection(this.test_config_file);
+    	// Test no saved connection found exception
+		conn.saveConnection("test", "localhost:"+fakeFtpServer.getServerControlPort()+":user:password");
+		assertFalse(conn.loginSaved("test3"));
+		
+		// https://stackoverflow.com/questions/41674408/java-test-system-output-including-new-lines-with-assertequals
+		// use printWriter to build expected string
+		StringWriter expectedStringWriter = new StringWriter();
+		PrintWriter printWriter = new PrintWriter(expectedStringWriter);
+		printWriter.println("Connection test3 doesn't exist...");
+		String expected = expectedStringWriter.toString();
+		printWriter.close();
+
+		assertEquals(expected, outContent.toString());
+		assertFalse(conn.isConnected());
+    }
+
     @AfterEach
     public void tearDown() {
     	fakeFtpServer.stop();
+    	// cleanup config after
+    	Path file_path = Paths.get(this.test_config_file);
+    	if (Files.exists(file_path)) {
+	    	try {
+				Files.delete(file_path);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+    	}
+        outContent.reset();
         System.setOut(originalOut);
         System.setErr(originalErr);
     }
