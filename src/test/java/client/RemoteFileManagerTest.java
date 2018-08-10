@@ -402,7 +402,6 @@ public class RemoteFileManagerTest {
 
     @Test
     public void changePermissionOnExistingFile() throws Exception{
-
         String sourcePath = "foobar.txt";
 
         assertTrue(remoteFileManager.setPermissionRemote("664", sourcePath));
@@ -410,7 +409,6 @@ public class RemoteFileManagerTest {
 
     @Test
     public void changePermissionOnNonExistingFile() throws Exception{
-
         String sourcePath = "zzfoobar.txt";
 
         assertFalse(remoteFileManager.setPermissionRemote("664", sourcePath));
