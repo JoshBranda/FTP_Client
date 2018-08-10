@@ -216,6 +216,27 @@ public class RemoteFileManager {
 
         return result;
     }
+
+    public boolean setPermissionRemote (String newPermission, String fileName) {
+
+        try {
+            InputStream inputStream = ftp.retrieveFileStream(fileName);
+            int returnCode = ftp.getReplyCode();
+            if (inputStream == null || returnCode == 550) {
+                return false;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            return ftp.sendSiteCommand("chmod " + newPermission + " " + fileName);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return false;
+    }
 }
 
 
