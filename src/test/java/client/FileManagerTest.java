@@ -71,6 +71,7 @@ public class FileManagerTest {
     @Test
     public void renameFileLS() {
         // This unit test looks for sample.txt in src/main/resources/ and renames it to pizza.txt.
+        // There should be a pizza.txt file after this test is run.
         String original = "sample.txt";
         String test = "pizza.txt";
 
@@ -78,6 +79,21 @@ public class FileManagerTest {
         fileManager.renameFileLS(original, test);
 
         assertEquals("File " + original + " renamed to " + test + "!", outContent.toString());
+
+
+    }
+
+    @Test
+    public void renameFileLSInvalid() {
+        // This unit test looks for a non-existent file called "foobar.txt" in src/main/resources.
+        // There should be no foobar.txt or pizza.txt.
+        String original = "foobar.txt";
+        String test = "pizza.txt";
+
+        fileManager.setLocalPath("src/main/resources/");
+        fileManager.renameFileLS(original, test);
+
+        assertEquals("ERROR: File Not renamed!", outContent.toString());
 
 
     }
