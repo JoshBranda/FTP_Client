@@ -11,6 +11,7 @@ import org.mockftpserver.fake.filesystem.DirectoryEntry;
 import org.mockftpserver.fake.filesystem.FileEntry;
 import org.mockftpserver.fake.filesystem.FileSystem;
 import org.mockftpserver.fake.filesystem.UnixFakeFileSystem;
+import org.mockftpserver.core.command.StaticReplyCommandHandler;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -397,6 +398,20 @@ public class RemoteFileManagerTest {
         List<String> result = remoteFileManager.downloadMultipleFiles(sourceFolder, files ,destFolder);
         assertTrue(result.get(0).equals("pizzaParty.txt"));
         new File(destFolder + fileName1).delete();
+    }
+
+    @Test
+    public void changePermissionOnExistingFile() throws Exception{
+        String sourcePath = "foobar.txt";
+
+        assertTrue(remoteFileManager.setPermissionRemote("664", sourcePath));
+    }
+
+    @Test
+    public void changePermissionOnNonExistingFile() throws Exception{
+        String sourcePath = "zzfoobar.txt";
+
+        assertFalse(remoteFileManager.setPermissionRemote("664", sourcePath));
     }
 
     @AfterEach
