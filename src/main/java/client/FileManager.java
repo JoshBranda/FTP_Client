@@ -24,4 +24,28 @@ public class FileManager {
             System.out.print(files[i].getName() + " ");
         }
     }
+
+    // Rename a file on a local server.
+    // Return true if successful.
+    public boolean renameFileLS(String toRename, String newName) {
+        File folder = new File(localPath);
+        boolean isRenamed;
+        // Get a list of files.
+        File [] files = folder.listFiles();
+
+        // Search all files in the local path.
+        // If a file with the name is detected, it will rename it.
+        for (int i = 0; i < files.length; i++) {
+            if (files[i].isFile() && (files[i].getName().equals(toRename))) {
+                File renamed = new File(localPath + newName); // Place the new file in the localPath.
+                isRenamed = files[i].renameTo(renamed); // Rename the file.
+                System.out.print("File " + toRename + " renamed to " + newName + "!");
+                return isRenamed;
+            }
+        }
+
+        System.out.print("ERROR: File Not renamed!");
+        return false;
+
+    }
 }
