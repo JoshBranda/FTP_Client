@@ -39,12 +39,12 @@ public class Menu{
 
         System.out.println("FTP Client: Please enter an option number or a command:");
         System.out.println("1. ls client");
-        System.out.println("2. rm client file");
-        System.out.println("3. mkdir client");
+        System.out.println("2. Rename File On Local side");
+        System.out.println("3. change local directory");
     	System.out.println("4. ls server");
         System.out.println("5. rm server file");
-        System.out.println("6. mkdir server");
-        System.out.println("7. Rename File On Local side");
+        System.out.println("6. mkdir server side");
+        System.out.println("7. Rename File On Server side");
         System.out.println("8. Change Permissions on remote file");
         System.out.println("9. Quit");
 
@@ -55,15 +55,14 @@ public class Menu{
 				fm.displayLocal();
 	            break;
     	    case 2:
-				System.out.print("Please enter the file to remove: ");
-				from = input.next();
-				input.nextLine();
-				rfm.removeFile(from);
+				System.out.println("Please enter the file name to change from: ");
+				from = input.nextLine();
+				rfls.renameFile(from);
 	            break;
     	    case 3:
-				System.out.print("What is the new directory name?");
+				System.out.print("What is the new directory path?");
 				to = input.nextLine();
-				rfm.makeDirectory(to);
+				rfls.setLocalPath(to);
 	            break;
 	        case 4:
 				rfm.displayDirectories();
@@ -71,17 +70,20 @@ public class Menu{
 	            break;
         	case 5:
 				System.out.print("What is the file you are removing?");
-				//rfm.removeFile("");
+				from = input.nextLine();
+				rfm.removeFile(from);
 	            break;
 	        case 6:
-				System.out.print("Enter the new server directory name:");
+				System.out.print("Enter the new directory name:");
 	            to = input.nextLine();
 				rfm.makeDirectory(to);
 				break;
         	case 7:
 				System.out.println("Please enter the file name to change from: ");
 				from = input.nextLine();
-				rfls.renameFile(from);
+				System.out.println("Enter the name to change the file to: ");
+				to = input.nextLine();
+				rfm.renameFile(from, to);
 	            break;
     	    case  8:
 				System.out.println("Please enter the file you want to change permissions on;");
