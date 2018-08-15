@@ -49,7 +49,7 @@ public class Menu{
         System.out.println("9. Quit");
 
 		option = input.nextInt();
-		input.nextLine();
+		//input.nextLine();
         switch (option) {
             case 1:
 				fm.displayLocal();
@@ -69,12 +69,12 @@ public class Menu{
 				rfm.displayFiles();
 	            break;
         	case 5:
-				System.out.print("What is the file you are removing?");
+				System.out.println("What is the file you are removing?");
 				from = input.nextLine();
 				rfm.removeFile(from);
 	            break;
 	        case 6:
-				System.out.print("Enter the new directory name:");
+				System.out.println("Enter the new directory name:");
 	            to = input.nextLine();
 				rfm.makeDirectory(to);
 				break;
