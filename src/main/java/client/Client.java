@@ -16,7 +16,7 @@ public class Client {
 		login.getCreds();
 		Scanner input = new Scanner(System.in);
 		Connection connection = new Connection();
-		connection.connect(login.getServerName(), 2121);
+		connection.connect(login.getServerName());
 		connection.login(login.getUsername(), login.getPassword());
 		FTPClient ftp = connection.getConnection();
 		RemoteFileManager remoteFileManager = new RemoteFileManager(ftp);

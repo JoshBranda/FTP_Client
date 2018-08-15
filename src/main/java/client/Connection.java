@@ -40,7 +40,6 @@ public class Connection {
 
 	public FTPSClient connect(String host) {
 		this.host = host;
-		this.port = port;
 		this.retries = 5;
 		// Retry for 5 times if connection fails
 		do {
