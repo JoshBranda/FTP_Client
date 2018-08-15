@@ -27,6 +27,10 @@ public class Menu{
 
     public static int display(FTPSClient ftp) {
 		rfm = new RemoteFileManager(ftp);
+		return display();
+	}
+
+	public static int display(){
 		String from;
 		String to;
 		int option;
@@ -91,6 +95,6 @@ public class Menu{
 	            System.out.println("Not a valid option");
 	            break;
         	}
-	    return display(ftp);
+	    return display();
     }
 }
