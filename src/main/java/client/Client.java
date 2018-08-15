@@ -1,8 +1,12 @@
 package client;
 
-public class Client {
-	public static void main(String[] args) {
+import org.apache.commons.net.ftp.FTPSClient;
 
+public class Client {
+	static private Menu menu;
+
+	public static void main(String[] args) {
+		menu = new Menu();
 		LoginPrompts login = new LoginPrompts();
 
 		// user and pass for testing connections
@@ -10,5 +14,12 @@ public class Client {
 
 		login.getCreds();
 
+		Connection connect = new Connection();
+		connect.connect(login.getServer(), 2121);
+		connect.login(login.getUser(), login.getPassword());
+		FTPSClient ftp = connect.getConnection();
+
+		menu.display(ftp);
 	}
+
 }
