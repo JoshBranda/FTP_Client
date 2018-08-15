@@ -1,4 +1,5 @@
 package client;
+import org.apache.commons.net.ftp.FTPSClient;
 import org.omg.PortableInterceptor.SYSTEM_EXCEPTION;
 
 import javax.rmi.CORBA.Util;
@@ -17,7 +18,6 @@ public class Menu{
 
     public Menu(){
         input = new Scanner(System.in);
-        //new Utilities();
     }
 
 
@@ -25,7 +25,8 @@ public class Menu{
         return 0;
     }
 
-    public static int display() {
+    public static int display(FTPSClient ftp) {
+		rfm = new RemoteFileManager(ftp);
 		String from;
 		String to;
 		int option;
@@ -84,7 +85,7 @@ public class Menu{
 				rfm.setPermissionRemote(from, to);
 	            break;
     	    case 9:
-	            System.out.println("Loging out and exiting");
+	            System.out.println("Logging out and exiting");
 				return 0;
         	default:
 	            System.out.println("Not a valid option");

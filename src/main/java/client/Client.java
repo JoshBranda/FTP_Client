@@ -1,5 +1,7 @@
 package client;
 
+import org.apache.commons.net.ftp.FTPSClient;
+
 public class Client {
 	static private Menu menu;
 
@@ -12,7 +14,12 @@ public class Client {
 
 		login.getCreds();
 
-		menu.display();
+		Connection connect = new Connection();
+		connect.connect(login.getServerName(), 2121);
+		connect.login(login.getUsername(), login.getPassword());
+		FTPSClient ftp = connect.getConnection();
+
+		menu.display(ftp);
 	}
 
 }
