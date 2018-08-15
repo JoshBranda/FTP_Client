@@ -14,7 +14,7 @@ public class Client {
 		System.out.println("running ftp client...");
 
 		login.getCreds();
-
+		Scanner input = new Scanner(System.in);
 		Connection connection = new Connection();
 		connection.connect(login.getServerName(), 2121);
 		connection.login(login.getUsername(), login.getPassword());
@@ -25,7 +25,6 @@ public class Client {
 		String answer;
 		while(!quit)
 		{
-			Scanner input = new Scanner(System.in);
 			System.out.println("What would you like to do with the remote server? Type 'quit' to quit.");
 			System.out.println("Press 1 to list local files");
 			System.out.println("Press 2 to list remote files");
@@ -49,9 +48,8 @@ public class Client {
 			}
 			if(answer.equals("3")) {
 				System.out.println("What file would you like to upload");
-				Scanner fileInput = new Scanner(System.in);
-				String inputFile = fileInput.next();
-				fileInput.nextLine();
+				String inputFile = input.next();
+				input.nextLine();
 				File fileToInput = new File(inputFile);
 				if (!remoteFileManager.uploadFile(fileToInput, fileToInput.getName())) {
 					System.out.println("File fail to upload");
@@ -61,12 +59,11 @@ public class Client {
 			if(answer.equals("4"))
 			{
 				System.out.println("What file would you like to download?");
-				Scanner fileToDownload = new Scanner(System.in);
-				String fileDownload = fileToDownload.next();
-				fileToDownload.nextLine();
+				String fileDownload = input.next();
+				input.nextLine();
 				System.out.println("Where should the file go?");
-				String fileDestPath = fileToDownload.next();
-				fileToDownload.nextLine();
+				String fileDestPath = input.next();
+				input.nextLine();
 				if (!remoteFileManager.downloadFile(fileDownload, fileDestPath)) {
 					System.out.println("File fail to download");
 				}
@@ -74,9 +71,8 @@ public class Client {
 			if(answer.equals("5"))
 			{
 				System.out.println("What directory would you like to create");
-				Scanner directoryCreation = new Scanner(System.in);
-				String directoryPath = directoryCreation.next();
-				directoryCreation.nextLine();
+				String directoryPath = input.next();
+				input.nextLine();
 				remoteFileManager.makeDirectory(directoryPath);
 			}
 
