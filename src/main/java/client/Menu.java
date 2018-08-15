@@ -51,7 +51,7 @@ public class Menu{
 		System.out.println("11. Quit");
 
 		option = input.nextInt();
-		//input.nextLine();
+		input.nextLine();
         switch (option) {
             case 1:
 				fm.displayLocal();
