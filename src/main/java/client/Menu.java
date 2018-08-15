@@ -38,15 +38,17 @@ public class Menu{
 		int option;
 
         System.out.println("FTP Client: Please enter an option number or a command:");
-        System.out.println("1. ls client");
-        System.out.println("2. Rename File On Local side");
-        System.out.println("3. change local directory");
-    	System.out.println("4. ls server");
-        System.out.println("5. rm server file");
-        System.out.println("6. mkdir server side");
-        System.out.println("7. Rename File On Server side");
-        System.out.println("8. Change Permissions on remote file");
-        System.out.println("9. Quit");
+        System.out.println("1.  ls client");
+        System.out.println("2.  Rename File On Local side");
+        System.out.println("3.  change local directory");
+    	System.out.println("4.  ls server");
+        System.out.println("5.  rm server file");
+        System.out.println("6.  mkdir server side");
+        System.out.println("7.  Rename File On Server side");
+        System.out.println("8.  Change Permissions on remote file");
+        System.out.println("9.  Upload file to Server");
+		System.out.println("10. Download file to client");
+		System.out.println("11. Quit");
 
 		option = input.nextInt();
 		//input.nextLine();
@@ -92,7 +94,22 @@ public class Menu{
 				from = input.nextLine();
 				rfm.setPermissionRemote(from, to);
 	            break;
-    	    case 9:
+			case 9:
+				System.out.println("Please enter the file you want to upload");
+				from = input.nextLine();
+				File fileToInput = new File(from);
+				if (!rfm.uploadFile(fileToInput, fileToInput.getName()))
+					System.out.println("File fail to upload");
+					break;
+			case 10:
+				System.out.println("Please enter the file you want to download");
+				from = input.nextLine();
+				System.out.println("Please enter where the file should go:");
+				to = input.nextLine();
+				if (!rfm.downloadFile(from, to))
+					System.out.println("File fail to download");
+				break;
+    	    case 11:
 	            System.out.println("Logging out and exiting");
 				return 0;
         	default:
