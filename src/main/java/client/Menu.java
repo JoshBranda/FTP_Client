@@ -17,8 +17,10 @@ public class Menu{
 	protected static RenameFileLocalServer rfls;
 
     public Menu(){
-        input = new Scanner(System.in);
-    }
+		input = new Scanner(System.in);
+    	fm    = new FileManager();
+		rfls  = new RenameFileLocalServer();
+	}
 
 
     public static int main(){
