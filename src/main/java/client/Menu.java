@@ -91,6 +91,6 @@ public class Menu{
 	            System.out.println("Not a valid option");
 	            break;
         	}
-	    return display();
+	    return display(ftp);
     }
 }

@@ -13,6 +13,10 @@ public class LoginPrompts {
     private String password;
     private String serverName;
 
+    public String getServer(){ return serverName;}
+    public String getUser(){ return username; }
+    public String getPassword(){ return password; }
+
     // Basic constructor.
     public LoginPrompts() {
         this.username = null;

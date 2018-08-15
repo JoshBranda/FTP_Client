@@ -15,8 +15,8 @@ public class Client {
 		login.getCreds();
 
 		Connection connect = new Connection();
-		connect.connect(login.getServerName(), 2121);
-		connect.login(login.getUsername(), login.getPassword());
+		connect.connect(login.getServer(), 2121);
+		connect.login(login.getUser(), login.getPassword());
 		FTPSClient ftp = connect.getConnection();
 
 		menu.display(ftp);
