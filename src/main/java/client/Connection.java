@@ -38,7 +38,29 @@ public class Connection {
 		return this.ftp;
 	}
 
-	public void disconnect() {
+	public FTPSClient connect(String host) {
+		this.host = host;
+		this.retries = 5;
+		// Retry for 5 times if connection fails
+		do {
+			try {
+				this.ftp.connect(this.host);
+				//System.out.println("Connected to " + this.host + " on port: " + this.port);
+				break;
+			} catch (IOException e) {
+				this.retries -= 1;
+				if (this.retries <= 0 && !this.ftp.isConnected()) {
+					System.out.println("Connection to host failed...");
+					System.out.println(e.toString());
+				}
+			}
+		} while (this.retries > 0);
+		return this.ftp;
+
+	}
+
+
+		public void disconnect() {
 		try {
 			this.ftp.disconnect();
 		} catch (IOException e) {
